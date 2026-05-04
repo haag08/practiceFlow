@@ -1,3 +1,55 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@theme {
+  /* Colors */
+  --color-primary: #c0c1ff;
+  --color-primary-container: #0d0093;
+  --color-primary-dim: #c0c1ff;
+  --color-secondary: #d2bbff;
+  --color-tertiary: #4edea3;
+
+  --color-surface: #0b1326;
+  --color-surface-container-highest: #2d3449;
+  --color-surface-container-high: #222a3d;
+  --color-surface-container: #171f33;
+  --color-surface-container-low: #131b2e;
+  --color-surface-container-lowest: #060e20;
+  
+  --color-surface-tint: #c0c1ff;
+  --color-on-surface-variant: #c5c6cd;
+  --color-outline-variant: #45474c;
+
+  /* Typography */
+  --font-display: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+@layer base {
+  html, body {
+    @apply bg-surface text-on-surface-variant font-body h-full w-full antialiased;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-surface-container-low/60 backdrop-blur-[20px];
+  }
+  
+  .glass-shadow {
+    box-shadow: 0 0 40px rgba(192, 193, 255, 0.04);
+  }
+
+  .ghost-border {
+    @apply border border-outline-variant/20;
+  }
+
+  .ghost-border-focus {
+    @apply focus:border-primary/40 focus:ring-0 focus:outline-none;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-primary to-primary-container;
+  }
+}
