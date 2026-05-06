@@ -13,6 +13,7 @@
   --on-surface-variant: #c5c6cd;
   --primary: #c0c1ff;
   --primary-container: #0d0093;
+  --glass-shadow: rgba(192, 193, 255, 0.04);
 }
 
 .light-theme {
@@ -26,6 +27,7 @@
   --on-surface-variant: #44474e;
   --primary: #4559be;
   --primary-container: #dae1ff;
+  --glass-shadow: rgba(0, 0, 0, 0.05);
 }
 
 @theme {
@@ -65,7 +67,7 @@
   }
   
   .glass-shadow {
-    box-shadow: 0 0 40px rgba(192, 193, 255, 0.04);
+    box-shadow: 0 0 40px var(--glass-shadow);
   }
 
   .ghost-border {
