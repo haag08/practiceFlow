@@ -5,6 +5,8 @@
   import { onDestroy, onMount } from 'svelte';
   import { fade, scale } from 'svelte/transition';
   import { MetronomeEngine } from '$lib/features/MetronomeEngine';
+  import { authStore } from '$lib/stores/auth.svelte';
+  import { dbService } from '$lib/services/dbService';
 
   let bpm = $state(120);
   let isPlaying = $state(false);
@@ -18,6 +20,7 @@
   let isMuted = $state(false);
 
   let tapTimes: number[] = [];
+  let startTime: number | null = null;
   
   const engine = new MetronomeEngine();
 
@@ -33,7 +36,14 @@
     { label: 'Digital', value: 'digital' }
   ];
 
-  onMount(() => {
+  onMount(async () => {
+    if (authStore.user) {
+      const settings = await dbService.getSettings(authStore.user.id);
+      if (settings.data?.default_bpm) {
+        bpm = settings.data.default_bpm;
+      }
+    }
+
     engine.onBeat = (beat) => {
       currentBeat = beat;
       triggerBeat();
@@ -56,13 +66,27 @@
     updateEngine();
   });
 
+  async function logMetronomeUsage() {
+    if (!startTime || !authStore.user) return;
+    const durationSeconds = (Date.now() - startTime) / 1000;
+    if (durationSeconds < 2) return; // Don't log very short usage
+
+    await dbService.logMetronome(authStore.user.id, {
+      bpm,
+      duration_seconds: Math.round(durationSeconds)
+    });
+    startTime = null;
+  }
+
   function togglePlay() {
     isPlaying = !isPlaying;
     if (isPlaying) {
+      startTime = Date.now();
       engine.start();
     } else {
       engine.stop();
       beatPulse = false;
+      logMetronomeUsage();
     }
   }
 
@@ -99,6 +123,7 @@
 
   onDestroy(() => {
     engine.stop();
+    if (isPlaying) logMetronomeUsage();
   });
 </script>
 
