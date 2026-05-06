@@ -39,6 +39,8 @@ jobs:
       - name: build
         env:
           BASE_PATH: '/practiceFlow'
+          PUBLIC_SUPABASE_URL: ${{ secrets.PUBLIC_SUPABASE_URL }}
+          PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
         run: pnpm run build
 
       - name: Upload Artifacts
