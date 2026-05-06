@@ -7,6 +7,7 @@
   import { dbService } from '$lib/services/dbService';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
+  import { page } from '$app/state';
 
   let sessionId = $state<string | null>(null);
   let startTime = $state<number>(Date.now());
@@ -14,7 +15,7 @@
   let timerInterval: any;
 
   let blocks = $state<any[]>([]);
-  let currentBlockType = $state('Warmup');
+  let currentBlockType = $state(page.url.searchParams.get('type') || 'Warmup');
   let currentBlockStart = $state(Date.now());
 
   onMount(async () => {
