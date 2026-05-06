@@ -144,5 +144,18 @@ export const dbService = {
       average_accuracy: data.average_accuracy,
       duration_seconds: data.duration_seconds
     });
+  },
+
+  // Storage
+  async uploadAvatar(path: string, file: File) {
+    return await supabase.storage
+      .from('avatars')
+      .upload(path, file);
+  },
+
+  getPublicAvatarUrl(path: string) {
+    return supabase.storage
+      .from('avatars')
+      .getPublicUrl(path);
   }
 };
