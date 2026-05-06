@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
+	import { settingsStore } from '$lib/stores/settings.svelte';
 
 	let { children } = $props();
 
@@ -26,7 +27,7 @@
 		<div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
 	</div>
 {:else}
-	<div class="min-h-screen {isLoginPage ? '' : 'pb-28'}">
+	<div class="min-h-screen {settingsStore.settings.dark_mode ? 'dark-theme' : 'light-theme'} {isLoginPage ? '' : 'pb-28'}">
 		{@render children()}
 	</div>
 
