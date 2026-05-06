@@ -10,6 +10,17 @@
 
 	let { children } = $props();
 
+	// Theme Logic
+	$effect(() => {
+		if (typeof document !== 'undefined') {
+			if (!settingsStore.settings.dark_mode) {
+				document.documentElement.classList.add('light-theme');
+			} else {
+				document.documentElement.classList.remove('light-theme');
+			}
+		}
+	});
+
 	// Protected Routes Logic
 	$effect(() => {
 		if (!authStore.loading && !authStore.isAuthenticated && page.url.pathname !== base + '/login') {
@@ -23,11 +34,11 @@
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
 {#if authStore.loading}
-	<div class="min-h-screen bg-[#0a0f1d] flex items-center justify-center">
+<div class="min-h-screen bg-surface flex items-center justify-center">
 		<div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
 	</div>
 {:else}
-	<div class="min-h-screen {settingsStore.settings.dark_mode ? 'dark-theme' : 'light-theme'} {isLoginPage ? '' : 'pb-28'}">
+	<div class="min-h-screen {isLoginPage ? '' : 'pb-28'}">
 		{@render children()}
 	</div>
 
