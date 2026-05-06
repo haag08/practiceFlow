@@ -22,16 +22,52 @@
 
   async function loadHomeData() {
     loading = true;
-    const today = new Date().toISOString().split('T')[0];
-    const [prof, stats] = await Promise.all([
+    const [prof, stats, allStats] = await Promise.all([
       dbService.getProfile(authStore.user!.id),
-      dbService.getDailyStats(authStore.user!.id, 1) // Get today's stats
+      dbService.getDailyStats(authStore.user!.id, 1),
+      dbService.getDailyStats(authStore.user!.id, 30) // For streak
     ]);
     
     profile = prof.data;
     todayStats = stats.data?.[0] || { total_minutes: 0, sessions_count: 0 };
+    
+    // Calculate streak
+    if (allStats.data) {
+      streak = calculateStreak(allStats.data);
+    }
+    
     loading = false;
   }
+
+  function calculateStreak(stats: any[]) {
+    if (!stats.length) return 0;
+    let currentStreak = 0;
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    
+    // Check if started today or yesterday
+    const latestDate = stats[0].date;
+    if (latestDate !== today && latestDate !== yesterday) return 0;
+
+    for (let i = 0; i < stats.length; i++) {
+      if (i === 0) {
+        currentStreak = 1;
+        continue;
+      }
+      const prevDate = new Date(stats[i-1].date);
+      const currDate = new Date(stats[i].date);
+      const diff = (prevDate.getTime() - currDate.getTime()) / (1000 * 3600 * 24);
+      
+      if (diff === 1) {
+        currentStreak++;
+      } else {
+        break;
+      }
+    }
+    return currentStreak;
+  }
+  
+  let streak = $state(0);
   
   const practiceItems = [
     { title: 'Warmup', subtitle: 'Long tones & lip slurs', duration: '10 min', icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
@@ -42,7 +78,7 @@
   const quickAccess = [
     { name: 'Metronome', icon: 'M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z', path: base + '/metronome' },
     { name: 'Tuner', icon: 'M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z', path: base + '/tuner' },
-    { name: 'Timer', icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z', path: '#' }
+    { name: 'Timer', icon: 'M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z', path: base + '/session' }
   ];
 </script>
 
@@ -64,7 +100,7 @@
       </div>
       
       <div class="flex flex-col items-center bg-surface-container-high px-4 py-2 rounded-2xl glass-shadow">
-        <span class="text-tertiary font-display font-bold text-xl">12</span> <!-- Mock streak for now, needs logic -->
+        <span class="text-tertiary font-display font-bold text-xl">{streak}</span>
         <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-body">Day Streak</span>
       </div>
     {/if}
@@ -96,27 +132,29 @@
       
       <div class="space-y-4 px-2">
         {#each practiceItems as item}
-          <Card level={1} padding="default" class="flex flex-col relative group cursor-pointer hover:bg-surface-container-high transition-colors !rounded-[2rem]">
-            <div class="flex items-start justify-between">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-2xl bg-surface-container-highest text-primary flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d={item.icon} />
-                  </svg>
+          <a href="{base}/session" class="block">
+            <Card level={1} padding="default" class="flex flex-col relative group cursor-pointer hover:bg-surface-container-high transition-colors !rounded-[2rem]">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-4">
+                  <div class="w-12 h-12 rounded-2xl bg-surface-container-highest text-primary flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                      <path stroke-linecap="round" stroke-linejoin="round" d={item.icon} />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 class="font-display font-medium text-on-surface text-lg">{item.title}</h4>
+                    <p class="font-body text-sm text-on-surface-variant mt-0.5">{item.subtitle}</p>
+                  </div>
                 </div>
-                <div>
-                  <h4 class="font-display font-medium text-on-surface text-lg">{item.title}</h4>
-                  <p class="font-body text-sm text-on-surface-variant mt-0.5">{item.subtitle}</p>
+                <div class="bg-surface-container-lowest px-3 py-1 rounded-full border border-white/5">
+                  <span class="text-xs text-on-surface-variant font-medium">{item.duration}</span>
                 </div>
               </div>
-              <div class="bg-surface-container-lowest px-3 py-1 rounded-full border border-white/5">
-                <span class="text-xs text-on-surface-variant font-medium">{item.duration}</span>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-surface-container-highest overflow-hidden">
+                <div class="h-full w-0 bg-primary/30 rounded-r-full transition-all group-hover:w-1/4"></div>
               </div>
-            </div>
-            <div class="absolute bottom-0 left-0 right-0 h-1 bg-surface-container-highest overflow-hidden">
-              <div class="h-full w-0 bg-primary/30 rounded-r-full transition-all group-hover:w-1/4"></div>
-            </div>
-          </Card>
+            </Card>
+          </a>
         {/each}
       </div>
     {/if}
