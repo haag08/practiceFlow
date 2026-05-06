@@ -5,16 +5,25 @@
   import { onMount, onDestroy } from 'svelte';
   import { fade } from 'svelte/transition';
   import { TunerEngine } from '$lib/features/TunerEngine';
+  import { authStore } from '$lib/stores/auth.svelte';
+  import { dbService } from '$lib/services/dbService';
 
   const engine = new TunerEngine();
   
   let isListening = $state(false);
   let isReferencePlaying = $state(false);
+  let tuningFreq = $state(440);
   
   let currentFreq = $state<number | null>(null);
   let currentNote = $state<string>('-');
   let currentCents = $state<number>(0);
   let hasSignal = $state(false);
+
+  // For logging
+  let startTime: number | null = null;
+  let detectedNotes: Set<string> = new Set();
+  let totalCents = 0;
+  let detections = 0;
 
   // Instruments mapping (semitones to transpose to display the WRITTEN note for the player)
   const instruments = [
@@ -27,9 +36,9 @@
   const noteStrings = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
 
   function getNoteData(freq: number, transpose: number) {
-    const noteNum = Math.round(12 * (Math.log2(freq / 440)) + 69);
+    const noteNum = Math.round(12 * (Math.log2(freq / tuningFreq)) + 69);
     // Target freq of the closest concert note
-    const targetFreq = 440 * Math.pow(2, (noteNum - 69) / 12);
+    const targetFreq = tuningFreq * Math.pow(2, (noteNum - 69) / 12);
     const cents = Math.floor(1200 * Math.log2(freq / targetFreq));
     
     // Transpose for display
@@ -41,7 +50,14 @@
     return { noteName, cents };
   }
 
-  onMount(() => {
+  onMount(async () => {
+    if (authStore.user) {
+      const settings = await dbService.getSettings(authStore.user.id);
+      if (settings.data?.tuning_freq) {
+        tuningFreq = settings.data.tuning_freq;
+      }
+    }
+
     engine.onPitchDetected = (pitch, rms) => {
       if (pitch) {
         hasSignal = true;
@@ -49,19 +65,43 @@
         const data = getNoteData(pitch, selectedInstrument.transpose);
         currentNote = data.noteName;
         currentCents = data.cents;
+
+        // Logging data
+        detectedNotes.add(data.noteName);
+        totalCents += Math.abs(data.cents);
+        detections++;
       } else {
         hasSignal = false;
       }
     };
   });
 
+  async function logTunerUsage() {
+    if (!startTime || !authStore.user) return;
+    const durationSeconds = (Date.now() - startTime) / 1000;
+    if (durationSeconds < 2) return;
+
+    await dbService.logTuner(authStore.user.id, {
+      notes_detected: Array.from(detectedNotes),
+      average_accuracy: detections > 0 ? totalCents / detections : 0,
+      duration_seconds: Math.round(durationSeconds)
+    });
+    
+    startTime = null;
+    detectedNotes.clear();
+    totalCents = 0;
+    detections = 0;
+  }
+
   async function toggleListening() {
     if (isListening) {
       engine.stopListening();
       isListening = false;
       hasSignal = false;
+      logTunerUsage();
     } else {
       await engine.startListening();
+      startTime = Date.now();
       isListening = true;
     }
   }
@@ -71,7 +111,7 @@
       engine.stopReferenceTone();
       isReferencePlaying = false;
     } else {
-      engine.playReferenceTone(440);
+      engine.playReferenceTone(tuningFreq);
       isReferencePlaying = true;
     }
   }
@@ -79,6 +119,7 @@
   onDestroy(() => {
     engine.stopListening();
     engine.stopReferenceTone();
+    if (isListening) logTunerUsage();
   });
 
   // Calculate tuning color
