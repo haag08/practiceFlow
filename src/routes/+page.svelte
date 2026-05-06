@@ -4,10 +4,34 @@
   import Card from '$lib/components/Card.svelte';
   import Button from '$lib/components/Button.svelte';
   import ProgressRing from '$lib/components/ProgressRing.svelte';
-  
+  import { onMount } from 'svelte';
   import { base } from '$app/paths';
-  
-  const user = { name: 'Julian', streak: 14, timeToday: 0, goal: 45 };
+  import { authStore } from '$lib/stores/auth.svelte';
+  import { dbService } from '$lib/services/dbService';
+
+  // State
+  let loading = $state(true);
+  let profile = $state<any>(null);
+  let todayStats = $state<any>(null);
+
+  onMount(() => {
+    if (authStore.user) {
+      loadHomeData();
+    }
+  });
+
+  async function loadHomeData() {
+    loading = true;
+    const today = new Date().toISOString().split('T')[0];
+    const [prof, stats] = await Promise.all([
+      dbService.getProfile(authStore.user!.id),
+      dbService.getDailyStats(authStore.user!.id, 1) // Get today's stats
+    ]);
+    
+    profile = prof.data;
+    todayStats = stats.data?.[0] || { total_minutes: 0, sessions_count: 0 };
+    loading = false;
+  }
   
   const practiceItems = [
     { title: 'Warmup', subtitle: 'Long tones & lip slurs', duration: '10 min', icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
@@ -22,63 +46,80 @@
   ];
 </script>
 
-<div class="p-4 pt-12 space-y-10 animate-fade-in pb-8">
+<div class="p-4 pt-12 space-y-10 animate-fade-in pb-8 min-h-screen">
   <!-- 1. Begrüßung & Streak -->
   <div class="flex items-start justify-between px-2">
-    <div>
-      <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-1">
-        Good Evening, <span class="gradient-text">{user.name}</span>.
-      </h1>
-      <p class="text-on-surface-variant font-body">Ready for your Nocturnal Session?</p>
-    </div>
-    
-    <div class="flex flex-col items-center bg-surface-container-high px-4 py-2 rounded-2xl glass-shadow">
-      <span class="text-tertiary font-display font-bold text-xl">{user.streak}</span>
-      <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-body">Day Streak</span>
-    </div>
+    {#if loading}
+      <div class="space-y-2">
+        <div class="h-8 w-48 bg-surface-container-high/50 animate-pulse rounded-lg"></div>
+        <div class="h-4 w-32 bg-surface-container-high/30 animate-pulse rounded-lg"></div>
+      </div>
+      <div class="w-16 h-16 bg-surface-container-high/50 animate-pulse rounded-2xl"></div>
+    {:else}
+      <div>
+        <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-1">
+          Good Evening, <span class="gradient-text">{profile?.username || 'Musician'}</span>.
+        </h1>
+        <p class="text-on-surface-variant font-body">Ready for your Nocturnal Session?</p>
+      </div>
+      
+      <div class="flex flex-col items-center bg-surface-container-high px-4 py-2 rounded-2xl glass-shadow">
+        <span class="text-tertiary font-display font-bold text-xl">12</span> <!-- Mock streak for now, needs logic -->
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-body">Day Streak</span>
+      </div>
+    {/if}
   </div>
 
   <!-- 3. Primary Start Button -->
   <div class="px-2">
-    <Button class="w-full text-lg shadow-[0_8px_32px_rgba(192,193,255,0.15)] flex items-center gap-3 relative overflow-hidden group">
-      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-        <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
-      </svg>
-      Start Practice Session
-    </Button>
+    <a href="{base}/session" class="block w-full">
+      <Button class="w-full h-16 text-lg shadow-[0_8px_32px_rgba(192,193,255,0.15)] flex items-center gap-3 relative overflow-hidden group !rounded-2xl">
+        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
+        </svg>
+        Start Practice Session
+      </Button>
+    </a>
   </div>
 
   <!-- 2. & 4. Overview & Cards -->
   <div>
-    <SectionHeader title="Today's Plan" subtitle="{user.goal} minutes total" />
-    
-    <div class="space-y-4 px-2">
-      {#each practiceItems as item}
-        <Card level={1} padding="default" class="flex flex-col relative group cursor-pointer hover:bg-surface-container-high transition-colors">
-          <div class="flex items-start justify-between">
-            <div class="flex items-center gap-4">
-              <div class="w-12 h-12 rounded-2xl bg-surface-container-highest text-primary flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d={item.icon} />
-                </svg>
+    {#if loading}
+      <div class="px-2 mb-4 h-6 w-32 bg-surface-container-high/30 animate-pulse rounded-lg"></div>
+      <div class="space-y-4 px-2">
+        <div class="h-24 w-full bg-surface-container-high/20 animate-pulse rounded-3xl"></div>
+        <div class="h-24 w-full bg-surface-container-high/20 animate-pulse rounded-3xl"></div>
+      </div>
+    {:else}
+      <SectionHeader title="Today's Plan" subtitle="{todayStats.total_minutes} / {profile?.weekly_goal_hours * 60 / 7 | 0} minutes today" />
+      
+      <div class="space-y-4 px-2">
+        {#each practiceItems as item}
+          <Card level={1} padding="default" class="flex flex-col relative group cursor-pointer hover:bg-surface-container-high transition-colors !rounded-[2rem]">
+            <div class="flex items-start justify-between">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-surface-container-highest text-primary flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d={item.icon} />
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-display font-medium text-on-surface text-lg">{item.title}</h4>
+                  <p class="font-body text-sm text-on-surface-variant mt-0.5">{item.subtitle}</p>
+                </div>
               </div>
-              <div>
-                <h4 class="font-display font-medium text-on-surface text-lg">{item.title}</h4>
-                <p class="font-body text-sm text-on-surface-variant mt-0.5">{item.subtitle}</p>
+              <div class="bg-surface-container-lowest px-3 py-1 rounded-full border border-white/5">
+                <span class="text-xs text-on-surface-variant font-medium">{item.duration}</span>
               </div>
             </div>
-            <div class="bg-surface-container-lowest px-3 py-1 rounded-full border border-white/5">
-              <span class="text-xs text-on-surface-variant font-medium">{item.duration}</span>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-surface-container-highest overflow-hidden">
+              <div class="h-full w-0 bg-primary/30 rounded-r-full transition-all group-hover:w-1/4"></div>
             </div>
-          </div>
-          <!-- Fake Progress indicator inside the card to look "finished" -->
-          <div class="absolute bottom-0 left-0 right-0 h-1 bg-surface-container-highest">
-            <div class="h-full w-0 bg-primary/30 rounded-r-full transition-all group-hover:w-1/4"></div>
-          </div>
-        </Card>
-      {/each}
-    </div>
+          </Card>
+        {/each}
+      </div>
+    {/if}
   </div>
 
   <!-- 6. Quick Access -->
@@ -86,13 +127,10 @@
     <SectionHeader title="Quick Access" />
     <div class="grid grid-cols-3 gap-3 px-2">
       {#each quickAccess as access}
-        <a href={access.path} class="flex flex-col items-center justify-center gap-3 bg-surface-container-high p-4 rounded-3xl hover:bg-surface-container-highest transition-colors">
-          <div class="w-10 h-10 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center">
+        <a href={access.path} class="flex flex-col items-center justify-center gap-3 bg-surface-container-high p-4 rounded-[2rem] hover:bg-surface-container-highest transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/5">
+          <div class="w-10 h-10 rounded-full bg-surface-container-lowest text-primary flex items-center justify-center shadow-inner">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
               <path stroke-linecap="round" stroke-linejoin="round" d={access.icon} />
-              {#if access.name === 'Tuner'}
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
-              {/if}
             </svg>
           </div>
           <span class="font-body text-xs font-medium text-on-surface-variant">{access.name}</span>
