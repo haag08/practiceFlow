@@ -61,7 +61,7 @@
               id="fullName"
               type="text" 
               bind:value={fullName}
-              placeholder="e.g. Julian Haag"
+              placeholder="e.g. Max Mustermann"
               class="w-full h-14 bg-surface-container-highest border border-white/5 rounded-2xl px-5 font-body text-on-surface focus:outline-none focus:border-primary/50 transition-colors"
               required
             />
@@ -72,7 +72,7 @@
               id="username"
               type="text" 
               bind:value={username}
-              placeholder="musician123"
+              placeholder="max_musi"
               class="w-full h-14 bg-surface-container-highest border border-white/5 rounded-2xl px-5 font-body text-on-surface focus:outline-none focus:border-primary/50 transition-colors"
               required
             />
