@@ -37,7 +37,7 @@
   }
 </script>
 
-<div class="min-h-screen flex flex-col items-center justify-center p-6 bg-[#0a0f1d] overflow-hidden relative">
+<div class="min-h-screen flex flex-col items-center justify-center p-6 bg-surface overflow-hidden relative">
   <!-- Background Decorative Elements -->
   <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-primary/10 blur-[120px] rounded-full"></div>
   <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-tertiary/5 blur-[120px] rounded-full"></div>
