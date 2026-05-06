@@ -14,7 +14,9 @@
 <div class="fixed bottom-0 left-0 right-0 h-24 bg-surface-container-highest/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-2 pb-safe z-50 rounded-t-[2rem]">
   {#each tabs as tab}
     {@const fullPath = base + (tab.path === '/' ? '' : tab.path)}
-    {@const isActive = page.url.pathname === (fullPath || '/')}
+    {@const normalizedPath = fullPath.replace(/\/$/, '') || '/'}
+    {@const normalizedCurrent = page.url.pathname.replace(/\/$/, '') || '/'}
+    {@const isActive = normalizedCurrent === normalizedPath}
     <a 
       href={fullPath || '/'} 
       class="flex flex-col items-center justify-center w-16 h-full gap-1 group transition-all duration-300"
