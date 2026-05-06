@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount, onDestroy } from 'svelte';
+  import { fade } from 'svelte/transition';
   import SectionHeader from '$lib/components/SectionHeader.svelte';
   import Card from '$lib/components/Card.svelte';
   import Button from '$lib/components/Button.svelte';
@@ -7,14 +9,20 @@
   import { authService } from '$lib/services/authService';
   import { dbService } from '$lib/services/dbService';
   import { goto } from '$app/navigation';
+  import { settingsStore } from '$lib/stores/settings.svelte';
 
   // State
   let loading = $state(true);
   let userData = $state<any>(null);
-  let settingsData = $state<any>(null);
+  let todayMinutes = $state(0);
+  let showAvatarModal = $state(false);
 
-  // Stats Logic (Mock for now, will be updated with daily_stats later)
-  let goalProgress = $derived(userData ? (7.5 / userData.weekly_goal_hours) * 100 : 0);
+  const avatars = [
+    '🎻', '🎹', '🎸', '🎺', '🎷', '🥁', '🎤', '🎼', '🎵', '🎶', '🎧', '📻'
+  ];
+
+  // Stats Logic
+  let goalProgress = $derived(userData ? (todayMinutes / (userData.weekly_goal_hours * 60 / 7)) * 100 : 0);
 
   $effect(() => {
     if (authStore.user) {
@@ -24,25 +32,51 @@
 
   async function loadData() {
     loading = true;
-    const [profile, settings] = await Promise.all([
+    const [profile, stats] = await Promise.all([
       dbService.getProfile(authStore.user!.id),
-      dbService.getSettings(authStore.user!.id)
+      dbService.getDailyStats(authStore.user!.id, 1)
     ]);
     
     userData = profile.data;
-    settingsData = settings.data;
+    todayMinutes = stats.data?.[0]?.total_minutes || 0;
     loading = false;
   }
 
-  async function updateSetting(key: string, value: any) {
+  async function updateProfile(updates: any) {
     if (!authStore.user) return;
-    settingsData[key] = value;
-    await dbService.updateSettings(authStore.user.id, { [key]: value });
+    userData = { ...userData, ...updates };
+    await dbService.updateProfile(authStore.user.id, updates);
+  }
+
+  async function updateSetting(key: string, value: any) {
+    await settingsStore.updateSetting(key, value);
   }
 
   async function handleLogout() {
     await authService.signOut();
     goto(base + '/login');
+  }
+
+  async function handlePhotoUpload(e: Event) {
+    const target = e.target as HTMLInputElement;
+    if (!target.files || target.files.length === 0) return;
+    
+    const file = target.files[0];
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${authStore.user!.id}-${Math.random()}.${fileExt}`;
+    const filePath = `avatars/${fileName}`;
+
+    const { error: uploadError } = await dbService.uploadAvatar(filePath, file);
+    if (uploadError) {
+      alert('Error uploading photo: ' + uploadError.message);
+      return;
+    }
+
+    const { data } = dbService.getPublicAvatarUrl(filePath);
+    if (data?.publicUrl) {
+      await updateProfile({ avatar_url: data.publicUrl });
+      showAvatarModal = false;
+    }
   }
 </script>
 
@@ -61,13 +95,17 @@
     <Card level={2} padding="lg" class="flex items-center gap-6 !rounded-[2.5rem] glass-shadow border border-white/5 relative overflow-hidden group">
       <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/10 blur-3xl rounded-full transition-transform group-hover:scale-150 duration-700"></div>
       
-      <div class="relative">
-        <div class="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center text-primary text-3xl font-display font-bold border-2 border-white/5 shadow-inner">
-          {userData.username?.[0].toUpperCase() || 'U'}
+      <div class="relative cursor-pointer group/avatar" onclick={() => showAvatarModal = true}>
+        <div class="w-20 h-20 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface text-3xl font-display font-bold border-2 border-white/5 shadow-inner transition-transform group-hover/avatar:scale-105">
+          {#if userData.avatar_url && userData.avatar_url.length < 5}
+            {userData.avatar_url}
+          {:else}
+            {userData.username?.[0].toUpperCase() || 'U'}
+          {/if}
         </div>
-        <div class="absolute bottom-0 right-0 w-6 h-6 bg-tertiary rounded-full border-4 border-[#0a0f1d] flex items-center justify-center">
+        <div class="absolute bottom-0 right-0 w-6 h-6 bg-primary rounded-full border-4 border-[#0a0f1d] flex items-center justify-center shadow-lg">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3 h-3 text-[#0a0f1d]">
-            <path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.83-4.401z" clip-rule="evenodd" />
+            <path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.154-1.262a.5.5 0 00.173-.11l10.874-10.874a2.121 2.121 0 10-3-3L2.806 14.59a.5.5 0 00-.111.173z" />
           </svg>
         </div>
       </div>
@@ -95,8 +133,17 @@
         <div class="h-full bg-gradient-to-r from-primary to-tertiary rounded-full transition-all duration-1000" style="width: {goalProgress}%"></div>
       </div>
       <div class="flex justify-between text-xs text-on-surface-variant font-body">
-        <span>7.5h practiced</span>
-        <span>Target: {userData.weekly_goal_hours}h</span>
+        <span>{todayMinutes}m practiced today</span>
+        <div class="flex items-center gap-2">
+          <span>Target:</span>
+          <input 
+            type="number" 
+            value={userData.weekly_goal_hours} 
+            onchange={(e) => updateProfile({ weekly_goal_hours: parseInt(e.currentTarget.value) })}
+            class="w-12 bg-surface-container-lowest border border-white/5 rounded-lg py-1 px-1 text-center text-xs font-display text-primary focus:outline-none focus:border-primary/50" 
+          />
+          <span>h/week</span>
+        </div>
       </div>
     </Card>
 
@@ -113,10 +160,10 @@
               <span class="text-on-surface font-body font-medium">Dark Mode</span>
             </div>
             <button 
-              onclick={() => updateSetting('dark_mode', !settingsData.dark_mode)}
-              class="w-12 h-6 rounded-full transition-colors relative {settingsData.dark_mode ? 'bg-primary' : 'bg-surface-container-highest'}"
+              onclick={() => updateSetting('dark_mode', !settingsStore.settings.dark_mode)}
+              class="w-12 h-6 rounded-full transition-colors relative {settingsStore.settings.dark_mode ? 'bg-primary' : 'bg-surface-container-highest'}"
             >
-              <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform {settingsData.dark_mode ? 'translate-x-6' : 'translate-x-0'}"></div>
+              <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform {settingsStore.settings.dark_mode ? 'translate-x-6' : 'translate-x-0'}"></div>
             </button>
           </div>
           <div class="flex items-center justify-between p-4 px-6">
@@ -127,10 +174,10 @@
               <span class="text-on-surface font-body font-medium">Notifications</span>
             </div>
             <button 
-              onclick={() => updateSetting('notifications', !settingsData.notifications)}
-              class="w-12 h-6 rounded-full transition-colors relative {settingsData.notifications ? 'bg-primary' : 'bg-surface-container-highest'}"
+              onclick={() => updateSetting('notifications', !settingsStore.settings.notifications)}
+              class="w-12 h-6 rounded-full transition-colors relative {settingsStore.settings.notifications ? 'bg-primary' : 'bg-surface-container-highest'}"
             >
-              <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform {settingsData.notifications ? 'translate-x-6' : 'translate-x-0'}"></div>
+              <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform {settingsStore.settings.notifications ? 'translate-x-6' : 'translate-x-0'}"></div>
             </button>
           </div>
         </Card>
@@ -149,7 +196,7 @@
             <div class="flex items-center gap-3">
               <input 
                 type="number" 
-                value={settingsData.default_bpm} 
+                value={settingsStore.settings.default_bpm} 
                 onchange={(e) => updateSetting('default_bpm', parseInt(e.currentTarget.value))}
                 class="w-16 bg-surface-container-lowest border border-white/5 rounded-lg py-1 px-2 text-center text-sm font-display text-primary focus:outline-none focus:border-primary/50" 
               />
@@ -167,7 +214,7 @@
               <input 
                 type="number" 
                 step="0.1" 
-                value={settingsData.tuning_freq} 
+                value={settingsStore.settings.tuning_freq} 
                 onchange={(e) => updateSetting('tuning_freq', parseFloat(e.currentTarget.value))}
                 class="w-16 bg-surface-container-lowest border border-white/5 rounded-lg py-1 px-2 text-center text-sm font-display text-primary focus:outline-none focus:border-primary/50" 
               />
@@ -194,6 +241,40 @@
     </div>
   {/if}
 
+  {#if showAvatarModal}
+    <div class="fixed inset-0 z-[100] flex items-center justify-center p-6" transition:fade>
+      <div class="absolute inset-0 bg-surface/80 backdrop-blur-sm" onclick={() => showAvatarModal = false}></div>
+      <Card level={3} class="w-full max-w-sm !rounded-[2.5rem] glass-shadow border border-white/10 z-10 relative overflow-hidden">
+        <div class="p-6 space-y-6">
+          <div class="flex justify-between items-center">
+            <h3 class="text-xl font-display font-bold">Choose Avatar</h3>
+            <button onclick={() => showAvatarModal = false} class="text-on-surface-variant hover:text-on-surface">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-4">
+            {#each avatars as avatar}
+              <button 
+                onclick={() => { updateProfile({ avatar_url: avatar }); showAvatarModal = false; }}
+                class="w-14 h-14 rounded-2xl bg-surface-container-highest flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all"
+              >
+                {avatar}
+              </button>
+            {/each}
+          </div>
+
+          <div class="pt-4 border-t border-white/5">
+            <label class="flex items-center justify-center gap-3 w-full h-14 bg-primary/10 border border-primary/20 text-primary rounded-2xl font-display font-medium cursor-pointer hover:bg-primary/20 transition-all">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+              Upload Photo
+              <input type="file" accept="image/*" class="hidden" onchange={handlePhotoUpload} />
+            </label>
+          </div>
+        </div>
+      </Card>
+    </div>
+  {/if}
 </div>
 
 <style>
