@@ -2,23 +2,50 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+:root {
+  --surface: #0b1326;
+  --surface-container-highest: #2d3449;
+  --surface-container-high: #222a3d;
+  --surface-container: #171f33;
+  --surface-container-low: #131b2e;
+  --surface-container-lowest: #060e20;
+  --on-surface: #ffffff;
+  --on-surface-variant: #c5c6cd;
+  --primary: #c0c1ff;
+  --primary-container: #0d0093;
+}
+
+.light-theme {
+  --surface: #f8f9ff;
+  --surface-container-highest: #e0e2ed;
+  --surface-container-high: #ebeef9;
+  --surface-container: #f1f3f9;
+  --surface-container-low: #f5f6fa;
+  --surface-container-lowest: #ffffff;
+  --on-surface: #1a1c1e;
+  --on-surface-variant: #44474e;
+  --primary: #4559be;
+  --primary-container: #dae1ff;
+}
+
 @theme {
   /* Colors */
-  --color-primary: #c0c1ff;
-  --color-primary-container: #0d0093;
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
   --color-primary-dim: #c0c1ff;
   --color-secondary: #d2bbff;
   --color-tertiary: #4edea3;
 
-  --color-surface: #0b1326;
-  --color-surface-container-highest: #2d3449;
-  --color-surface-container-high: #222a3d;
-  --color-surface-container: #171f33;
-  --color-surface-container-low: #131b2e;
-  --color-surface-container-lowest: #060e20;
+  --color-surface: var(--surface);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-lowest: var(--surface-container-lowest);
   
-  --color-surface-tint: #c0c1ff;
-  --color-on-surface-variant: #c5c6cd;
+  --color-surface-tint: var(--primary);
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
   --color-outline-variant: #45474c;
 
   /* Typography */
@@ -28,7 +55,7 @@
 
 @layer base {
   html, body {
-    @apply bg-surface text-on-surface-variant font-body h-full w-full antialiased;
+    @apply bg-surface text-on-surface font-body h-full w-full antialiased transition-colors duration-300;
   }
 }
 
