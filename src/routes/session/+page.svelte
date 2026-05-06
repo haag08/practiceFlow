@@ -79,7 +79,7 @@
   });
 </script>
 
-<div class="p-6 pt-16 flex flex-col items-center justify-center min-h-screen bg-[#0a0f1d] text-on-surface">
+<div class="p-6 pt-16 flex flex-col items-center justify-center min-h-screen bg-surface text-on-surface">
   <div class="w-full max-w-md space-y-8 animate-fade-in">
     <div class="text-center space-y-2">
       <span class="text-primary font-body text-sm font-bold uppercase tracking-[0.3em]">Active Session</span>
