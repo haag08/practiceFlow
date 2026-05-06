@@ -92,11 +92,22 @@
       </div>
       <div class="w-16 h-16 bg-surface-container-high/50 animate-pulse rounded-2xl"></div>
     {:else}
-      <div>
-        <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-1">
-          Good Evening, <span class="gradient-text">{profile?.username || 'Musician'}</span>.
-        </h1>
-        <p class="text-on-surface-variant font-body">Ready for your Nocturnal Session?</p>
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-on-surface text-2xl border border-white/5 shadow-inner">
+          {#if profile?.avatar_url && profile.avatar_url.length < 5}
+            {profile.avatar_url}
+          {:else if profile?.avatar_url}
+            <img src={profile.avatar_url} alt="Avatar" class="w-full h-full object-cover rounded-2xl" />
+          {:else}
+            {profile?.username?.[0].toUpperCase() || 'M'}
+          {/if}
+        </div>
+        <div>
+          <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-0.5">
+            Good Evening, <span class="gradient-text">{profile?.username || 'Musician'}</span>.
+          </h1>
+          <p class="text-on-surface-variant font-body text-sm opacity-80">Ready for your Nocturnal Session?</p>
+        </div>
       </div>
       
       <div class="flex flex-col items-center bg-surface-container-high px-4 py-2 rounded-2xl glass-shadow">
@@ -132,7 +143,7 @@
       
       <div class="space-y-4 px-2">
         {#each practiceItems as item}
-          <a href="{base}/session" class="block">
+          <a href="{base}/session?type={item.title}" class="block">
             <Card level={1} padding="default" class="flex flex-col relative group cursor-pointer hover:bg-surface-container-high transition-colors !rounded-[2rem]">
               <div class="flex items-start justify-between">
                 <div class="flex items-center gap-4">
