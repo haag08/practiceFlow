@@ -104,7 +104,7 @@
         </div>
         <div>
           <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-0.5">
-            Good Evening, <span class="gradient-text">{profile?.username || 'Musician'}</span>.
+            Good Evening, <span class="gradient-text">{profile?.full_name?.split(' ')[0] || profile?.username || 'Musician'}</span>.
           </h1>
           <p class="text-on-surface-variant font-body text-sm opacity-80">Ready for your Nocturnal Session?</p>
         </div>
