@@ -8,6 +8,13 @@ class AuthStore {
 
   constructor() {
     this.init();
+    // safety net: if loading stays true (e.g., supabase unreachable) unfreeze UI after 5 s
+    setTimeout(() => {
+      if (this.loading) {
+        console.warn('AuthStore: loading timeout – forcing loading = false');
+        this.loading = false;
+      }
+    }, 5000);
   }
 
   async init() {
