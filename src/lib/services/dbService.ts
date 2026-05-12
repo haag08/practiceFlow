@@ -153,9 +153,28 @@ export const dbService = {
       .upload(path, file);
   },
 
-  getPublicAvatarUrl(path: string) {
-    return supabase.storage
-      .from('avatars')
-      .getPublicUrl(path);
-  }
-};
+  // Pieces Management
+  async createFolder(userId: string, folderName: string) {
+    // Simple implementation using a 'folders' table
+    return await supabase.from('folders').insert({ user_id: userId, name: folderName });
+  },
+
+  async getFolders(userId: string) {
+    const { data, error } = await supabase
+      .from('folders')
+      .select('*')
+      .eq('user_id', userId)
+      .order('name');
+    return { data, error };
+  },
+
+  async uploadPieceFile(userId: string, folderName: string, file: File) {
+    const path = `${userId}/${folderName}/${file.name}`;
+    return await supabase.storage.from('pieces').upload(path, file);
+  },
+
+  async listPieceFiles(userId: string, folderName: string) {
+    const { data, error } = await supabase.storage.from('pieces').list(`${userId}/${folderName}`);
+    return { data, error };
+  },
+
