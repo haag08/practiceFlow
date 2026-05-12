@@ -2,6 +2,10 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+/* ============================================
+   DARK THEME (default)
+   Deep indigo-blue, the original look
+   ============================================ */
 :root {
   --surface: #0b1326;
   --surface-container-highest: #2d3449;
@@ -9,34 +13,57 @@
   --surface-container: #171f33;
   --surface-container-low: #131b2e;
   --surface-container-lowest: #060e20;
-  --on-surface: #ffffff;
-  --on-surface-variant: #c5c6cd;
+  --on-surface: #e8eaf6;
+  --on-surface-variant: #b0b3c1;
   --primary: #c0c1ff;
-  --primary-container: #0d0093;
-  --glass-shadow: rgba(192, 193, 255, 0.04);
+  --primary-container: #2a2f9e;
+  --secondary: #d2bbff;
+  --tertiary: #4edea3;
+  --error: #f28b82;
+  --outline-variant: #2e3347;
+  --glass-shadow: rgba(192, 193, 255, 0.06);
 }
 
+/* ============================================
+   LIGHT THEME
+   Warm cream & soft indigo — reads easily,
+   uses same purple/teal accent family
+   ============================================ */
 .light-theme {
-  --surface: #f8f9ff;
-  --surface-container-highest: #e0e2ed;
-  --surface-container-high: #ebeef9;
-  --surface-container: #f1f3f9;
-  --surface-container-low: #f5f6fa;
+  /* Page background: very warm off-white with a subtle indigo tint */
+  --surface: #f2f3fb;
+  /* Cards: layered from pure white down to a light lavender-tinted gray */
   --surface-container-lowest: #ffffff;
-  --on-surface: #1a1c1e;
-  --on-surface-variant: #44474e;
-  --primary: #4559be;
-  --primary-container: #dae1ff;
-  --glass-shadow: rgba(0, 0, 0, 0.05);
+  --surface-container-low: #f5f5ff;
+  --surface-container: #edeef8;
+  --surface-container-high: #e5e6f2;
+  --surface-container-highest: #d8d9ea;
+  /* Text: near-black with a slight blue-gray tint for warmth */
+  --on-surface: #16181f;
+  --on-surface-variant: #4a4c5e;
+  /* Accent: deeper, richer indigo so it's visible on light backgrounds */
+  --primary: #3d3db8;
+  --primary-container: #e3e3ff;
+  /* Keep secondary and tertiary consistent */
+  --secondary: #6b45c4;
+  --tertiary: #0d7a52;
+  /* Better error color for light mode */
+  --error: #b3261e;
+  /* Subtle borders */
+  --outline-variant: #c7c8da;
+  /* Soft shadow for glassmorphism in light mode */
+  --glass-shadow: rgba(61, 61, 184, 0.08);
 }
 
+/* ============================================
+   TAILWIND THEME TOKENS
+   ============================================ */
 @theme {
-  /* Colors */
   --color-primary: var(--primary);
   --color-primary-container: var(--primary-container);
-  --color-primary-dim: #c0c1ff;
-  --color-secondary: #d2bbff;
-  --color-tertiary: #4edea3;
+  --color-secondary: var(--secondary);
+  --color-tertiary: var(--tertiary);
+  --color-error: var(--error);
 
   --color-surface: var(--surface);
   --color-surface-container-highest: var(--surface-container-highest);
@@ -44,41 +71,51 @@
   --color-surface-container: var(--surface-container);
   --color-surface-container-low: var(--surface-container-low);
   --color-surface-container-lowest: var(--surface-container-lowest);
-  
+
   --color-surface-tint: var(--primary);
   --color-on-surface: var(--on-surface);
   --color-on-surface-variant: var(--on-surface-variant);
-  --color-outline-variant: #45474c;
+  --color-on-primary: #ffffff;
+  --color-outline-variant: var(--outline-variant);
 
-  /* Typography */
   --font-display: 'Manrope', sans-serif;
   --font-body: 'Inter', sans-serif;
 }
 
+/* ============================================
+   BASE
+   ============================================ */
 @layer base {
   html, body {
-    @apply bg-surface text-on-surface font-body h-full w-full antialiased transition-colors duration-300;
+    @apply bg-surface text-on-surface font-body h-full w-full antialiased;
+    transition: background-color 0.35s ease, color 0.35s ease;
   }
 }
 
+/* ============================================
+   UTILITIES
+   ============================================ */
 @layer utilities {
   .glass-panel {
     @apply bg-surface-container-low/60 backdrop-blur-[20px];
   }
-  
+
   .glass-shadow {
     box-shadow: 0 0 40px var(--glass-shadow);
   }
 
   .ghost-border {
-    @apply border border-outline-variant/20;
+    border: 1px solid var(--outline-variant);
+    opacity: 0.6;
   }
 
   .ghost-border-focus {
     @apply focus:border-primary/40 focus:ring-0 focus:outline-none;
   }
 
+  /* In dark mode: periwinkle→indigo. In light: deep indigo→violet. */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-br from-primary to-primary-container;
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, var(--primary), var(--secondary));
   }
 }
