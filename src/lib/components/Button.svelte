@@ -17,7 +17,7 @@
   } = $props();
 
   // reactive theme flag
-  const isDark = $settingsStore.settings.dark_mode;
+  const isDark = settingsStore.settings.dark_mode;
 
   const baseClasses = 'inline-flex items-center justify-center font-display font-bold transition-all duration-200 active:scale-98';
   
