@@ -72,7 +72,7 @@
   const practiceItems = [
     { title: 'Warmup', subtitle: 'Long tones & lip slurs', duration: '10 min', icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
     { title: 'Technique', subtitle: 'C Major Scale (120 BPM)', duration: '15 min', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
-    { title: 'Pieces', subtitle: 'Concerto No. 1 - Mvt 1', duration: '20 min', icon: 'M9 19.5v-15m0 0l-5.5 5.5M9 4.5l5.5 5.5M21 15v4.5a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5V15' }
+    { title: 'Pieces', subtitle: 'Concerto No. 1 - Mvt 1', duration: '20 min', icon: 'M9 19.5v-15m0 0l-5.5 5.5M9 4.5l5.5 5.5M21 15v4.5a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5V15', path: base + '/pieces' }
   ];
 
   const quickAccess = [
@@ -143,7 +143,7 @@
       
       <div class="space-y-4 px-2">
         {#each practiceItems as item}
-          <a href="{base}/session?type={item.title}" class="block">
+          <a href="{item.path ? item.path : `${base}/session?type=${item.title}`}" class="block">
             <Card level={1} padding="default" class="flex flex-col relative group cursor-pointer hover:bg-surface-container-high transition-colors !rounded-[2rem]">
               <div class="flex items-start justify-between">
                 <div class="flex items-center gap-4">
