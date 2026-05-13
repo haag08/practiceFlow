@@ -16,7 +16,7 @@
   let timerInterval: any;
 
   let blocks = $state<any[]>([]);
-  let currentBlockType = $state(page.url.searchParams.get('type') || i18n.t('session.warmup'));
+  let currentBlockType = $state(page.url.searchParams.get('type') || 'warmup');
   let currentBlockStart = $state(Date.now());
 
   onMount(async () => {
@@ -91,12 +91,12 @@
       <div class="space-y-4">
         <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('session.current_focus')}</label>
         <div class="grid grid-cols-2 gap-3">
-          {#each [i18n.t('session.warmup'), i18n.t('session.technique'), i18n.t('session.repertoire'), i18n.t('session.ensemble')] as type}
+          {#each ['warmup', 'technique', 'repertoire', 'ensemble'] as type}
             <button 
               onclick={() => { addBlock(); currentBlockType = type; }}
               class="py-3 rounded-2xl text-sm font-display transition-all {currentBlockType === type ? 'bg-primary text-on-primary shadow-lg scale-[1.02]' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant'}"
             >
-              {type}
+              {i18n.t('session.' + type)}
             </button>
           {/each}
         </div>
@@ -108,8 +108,8 @@
           <div class="space-y-2">
             {#each blocks as block}
               <div class="flex justify-between items-center p-3 bg-surface-container-lowest rounded-xl border border-white/5">
-                <span class="text-sm font-body">{block.type}</span>
-                <span class="text-sm font-display text-primary">{block.duration_minutes} min</span>
+                <span class="text-sm font-body">{i18n.t('session.' + block.type)}</span>
+                <span class="text-sm font-display text-primary">{block.duration_minutes} {i18n.t('common.min')}</span>
               </div>
             {/each}
           </div>
