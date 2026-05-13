@@ -7,6 +7,7 @@
   import { TunerEngine } from '$lib/features/TunerEngine';
   import { authStore } from '$lib/stores/auth.svelte';
   import { dbService } from '$lib/services/dbService';
+  import { i18n } from '$lib/i18n.svelte';
 
   const engine = new TunerEngine();
   
@@ -145,7 +146,7 @@
 </script>
 
 <div class="p-4 pt-12 space-y-6 animate-fade-in pb-28 flex flex-col h-full min-h-screen">
-  <SectionHeader title="Tuner" subtitle="Perfect your intonation" />
+  <SectionHeader title={i18n.t('tuner.title')} subtitle={i18n.t('tuner.subtitle')} />
   
   <!-- Top Bar: Instrument & Reference -->
   <div class="flex gap-4 z-10">
@@ -164,7 +165,7 @@
       onclick={toggleReferenceTone}
       class="flex flex-col items-center justify-center px-4 rounded-2xl transition-all duration-300 border border-white/5 {isReferencePlaying ? 'bg-primary/20 text-primary' : 'bg-surface-container text-on-surface-variant'}"
     >
-      <span class="text-[10px] font-medium tracking-wider uppercase mb-0.5">Ref Tone</span>
+      <span class="text-[10px] font-medium tracking-wider uppercase mb-0.5">{i18n.t('tuner.ref_tone')}</span>
       <span class="text-sm font-display font-bold">A440</span>
     </button>
   </div>
@@ -179,7 +180,7 @@
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
           <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
         </span>
-        <span class="text-sm text-on-surface-variant font-body animate-pulse">Listening...</span>
+        <span class="text-sm text-on-surface-variant font-body animate-pulse">{i18n.t('tuner.listening')}</span>
       </div>
     {/if}
 
@@ -200,9 +201,9 @@
         {#if !hasSignal}
           --
         {:else if currentCents > 0}
-          +{currentCents} cents
+          +{currentCents} {i18n.t('tuner.cents')}
         {:else}
-          {currentCents} cents
+          {currentCents} {i18n.t('tuner.cents')}
         {/if}
       </span>
     </div>
@@ -222,9 +223,9 @@
       
       <!-- Labels -->
       <div class="flex justify-between text-[10px] uppercase tracking-widest text-on-surface-variant font-body">
-        <span>Flat</span>
-        <span class="text-tertiary opacity-70">Perfect</span>
-        <span>Sharp</span>
+        <span>{i18n.t('tuner.flat')}</span>
+        <span class="text-tertiary opacity-70">{i18n.t('tuner.perfect')}</span>
+        <span>{i18n.t('tuner.sharp')}</span>
       </div>
     </div>
   </Card>
@@ -236,9 +237,9 @@
       class="w-full text-lg shadow-[0_8px_32px_rgba(192,193,255,0.15)] transition-all duration-300 {isListening ? 'bg-surface-container-highest text-primary hover:bg-surface-variant border border-primary/20' : ''}"
     >
       {#if isListening}
-        Stop Tuner
+        {i18n.t('common.stop')} {i18n.t('tuner.title')}
       {:else}
-        Start Tuner
+        {i18n.t('common.start')} {i18n.t('tuner.title')}
       {/if}
     </Button>
   </div>
