@@ -18,6 +18,12 @@
   let blocks = $state<any[]>([]);
   let currentBlockType = $state(page.url.searchParams.get('type') || 'warmup');
   let currentBlockStart = $state(Date.now());
+  let isTypePreselected = $state(!!page.url.searchParams.get('type'));
+
+  let quotes = $derived(i18n.t('session.quotes') as string[]);
+  let currentQuoteIndex = $state(0);
+  let currentQuote = $derived(quotes[currentQuoteIndex]);
+  let quoteInterval: any;
 
   onMount(async () => {
     if (!authStore.user) {
@@ -34,6 +40,11 @@
     timerInterval = setInterval(() => {
       elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
     }, 1000);
+
+    // Motivational quotes rotation (every 30 seconds)
+    quoteInterval = setInterval(() => {
+      currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+    }, 30000);
   });
 
   function formatTime(totalSeconds: number) {
@@ -77,30 +88,49 @@
 
   onDestroy(() => {
     clearInterval(timerInterval);
+    clearInterval(quoteInterval);
   });
 </script>
 
 <div class="p-6 pt-16 flex flex-col items-center justify-center min-h-screen bg-surface text-on-surface">
   <div class="w-full max-w-md space-y-8 animate-fade-in">
-    <div class="text-center space-y-2">
-      <span class="text-primary font-body text-sm font-bold uppercase tracking-[0.3em]">{i18n.t('session.active_session')}</span>
-      <h1 class="text-6xl font-display font-light tracking-tighter">{formatTime(elapsedSeconds)}</h1>
+    <div class="text-center space-y-4">
+      <div class="space-y-2">
+        <span class="text-primary font-body text-sm font-bold uppercase tracking-[0.3em]">{i18n.t('session.active_session')}</span>
+        <h1 class="text-6xl font-display font-light tracking-tighter">{formatTime(elapsedSeconds)}</h1>
+      </div>
+      
+      {#if currentQuote}
+        <div class="h-12 flex items-center justify-center px-4" transition:fade>
+          <p class="text-on-surface-variant font-body italic text-sm text-center max-w-xs opacity-70">
+            "{currentQuote}"
+          </p>
+        </div>
+      {/if}
     </div>
 
     <Card level={2} padding="lg" class="!rounded-[2.5rem] glass-shadow border border-white/5 space-y-6">
-      <div class="space-y-4">
-        <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('session.current_focus')}</label>
-        <div class="grid grid-cols-2 gap-3">
-          {#each ['warmup', 'technique', 'repertoire', 'ensemble'] as type}
-            <button 
-              onclick={() => { addBlock(); currentBlockType = type; }}
-              class="py-3 rounded-2xl text-sm font-display transition-all {currentBlockType === type ? 'bg-primary text-on-primary shadow-lg scale-[1.02]' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant'}"
-            >
-              {i18n.t('session.' + type)}
-            </button>
-          {/each}
+      {#if !isTypePreselected}
+        <div class="space-y-4">
+          <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('session.current_focus')}</label>
+          <div class="grid grid-cols-2 gap-3">
+            {#each ['warmup', 'technique', 'repertoire', 'ensemble'] as type}
+              <button 
+                onclick={() => { addBlock(); currentBlockType = type; }}
+                class="py-3 rounded-2xl text-sm font-display transition-all {currentBlockType === type ? 'bg-primary text-on-primary shadow-lg scale-[1.02]' : 'bg-surface-container-highest text-on-surface-variant hover:bg-surface-variant'}"
+              >
+                {i18n.t('session.' + type)}
+              </button>
+            {/each}
+          </div>
         </div>
-      </div>
+      {:else}
+        <div class="flex items-center justify-center py-2">
+          <div class="px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-display font-bold text-sm uppercase tracking-widest">
+            {i18n.t('session.' + currentBlockType)}
+          </div>
+        </div>
+      {/if}
 
       {#if blocks.length > 0}
         <div class="space-y-3 pt-4 border-t border-white/5">
