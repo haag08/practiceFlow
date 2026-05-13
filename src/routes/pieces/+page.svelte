@@ -6,6 +6,7 @@
   import Card from '$lib/components/Card.svelte';
   import SectionHeader from '$lib/components/SectionHeader.svelte';
   import { fade, slide } from 'svelte/transition';
+  import { i18n } from '$lib/i18n.svelte';
 
   // State
   let loading = $state(true);
@@ -75,20 +76,22 @@
   }
 
   async function handleDeletePiece(piece: any) {
-    if (!confirm(`Delete "${piece.name}"?`)) return;
+    if (!confirm(`${i18n.t('common.delete')} "${piece.name}"?`)) return;
     const { error } = await dbService.deletePiece(piece.id, piece.storage_path);
     if (!error) loadData();
   }
 
   async function handleDeleteFolder(folder: any) {
-    if (!confirm(`Delete folder "${folder.name}" and all its contents?`)) return;
+    if (!confirm(`${i18n.t('common.delete')} "${folder.name}"?`)) return;
     const { error } = await dbService.deleteFolder(folder.id);
     if (!error) loadData();
   }
 
   function openFile(storagePath: string) {
-    const url = dbService.getPiecePublicUrl(storagePath);
-    window.open(url, '_blank');
+    const { data } = dbService.getPiecePublicUrl(storagePath);
+    if (data?.publicUrl) {
+      window.open(data.publicUrl, '_blank');
+    }
   }
 </script>
 
@@ -96,8 +99,8 @@
   <!-- Header & Breadcrumbs -->
   <div class="px-2">
     <SectionHeader 
-      title={currentFolderName || "My Pieces"} 
-      subtitle={currentFolderName ? "Inside your folder" : "Organise your sheet music"} 
+      title={currentFolderName || i18n.t('pieces.title')} 
+      subtitle={currentFolderName ? i18n.t('pieces.subtitle') : i18n.t('pieces.subtitle')} 
     />
     
     {#if currentFolderId}
@@ -108,7 +111,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
         </svg>
-        Back to all pieces
+        {i18n.t('common.back')}
       </button>
     {/if}
   </div>
@@ -123,12 +126,12 @@
     >
       {#if uploading}
         <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-        Uploading...
+        {i18n.t('common.upload')}...
       {:else}
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
         </svg>
-        Upload Piece
+        {i18n.t('pieces.upload_piece')}
       {/if}
     </Button>
     <input 
@@ -147,7 +150,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 4.5v15a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-3.938a1.5 1.5 0 01-1.06-.44l-2.122-2.12z" />
         </svg>
-        New Folder
+        {i18n.t('pieces.new_folder')}
       </Button>
     {/if}
   </div>
@@ -155,16 +158,16 @@
   <!-- Create Folder Form -->
   {#if showCreateFolder}
     <div class="px-2" transition:slide>
-      <Card class="p-4 flex gap-3 items-center">
+      <Card class="p-4 flex gap-3 items-center !rounded-2xl border border-white/5">
         <input 
           type="text" 
           bind:value={newFolderName}
-          placeholder="Folder name..."
+          placeholder={i18n.t('pieces.folder_name')}
           class="flex-1 bg-surface-container-highest border-none rounded-xl px-4 py-2 text-on-surface focus:ring-2 focus:ring-primary outline-none"
           onkeydown={(e) => e.key === 'Enter' && handleCreateFolder()}
         />
-        <Button variant="primary" onclick={handleCreateFolder}>Create</Button>
-        <Button variant="secondary" onclick={() => showCreateFolder = false}>Cancel</Button>
+        <Button variant="primary" class="!rounded-xl" onclick={handleCreateFolder}>{i18n.t('common.create')}</Button>
+        <Button variant="secondary" class="!rounded-xl" onclick={() => showCreateFolder = false}>{i18n.t('common.cancel')}</Button>
       </Card>
     </div>
   {/if}
@@ -181,7 +184,7 @@
         {#each folders as folder}
           <div transition:fade>
             <Card 
-              class="group relative flex items-center justify-between p-4 hover:bg-surface-container-high transition-all cursor-pointer !rounded-[2rem]"
+              class="group relative flex items-center justify-between p-4 hover:bg-surface-container-high transition-all cursor-pointer !rounded-[2rem] border border-white/5"
               onclick={() => navigateToFolder(folder)}
             >
               <div class="flex items-center gap-4">
@@ -211,7 +214,7 @@
       {#each pieces as piece}
         <div transition:fade>
           <Card 
-            class="group relative flex items-center justify-between p-4 hover:bg-surface-container-high transition-all cursor-pointer !rounded-[2rem]"
+            class="group relative flex items-center justify-between p-4 hover:bg-surface-container-high transition-all cursor-pointer !rounded-[2rem] border border-white/5"
             onclick={() => openFile(piece.storage_path)}
           >
             <div class="flex items-center gap-4">
@@ -222,7 +225,7 @@
               </div>
               <div class="overflow-hidden">
                 <h3 class="font-display font-medium text-on-surface text-lg truncate pr-8">{piece.name}</h3>
-                <p class="text-xs text-on-surface-variant opacity-60">Uploaded {new Date(piece.created_at).toLocaleDateString()}</p>
+                <p class="text-xs text-on-surface-variant opacity-60">{i18n.t('common.upload')} {new Date(piece.created_at).toLocaleDateString()}</p>
               </div>
             </div>
             <button 
@@ -244,8 +247,8 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
             </svg>
           </div>
-          <p class="text-on-surface-variant font-medium">Your library is empty.</p>
-          <p class="text-xs text-on-surface-variant opacity-60 max-w-xs mx-auto">Create a folder or upload your first piece of sheet music to get started.</p>
+          <p class="text-on-surface-variant font-medium">{i18n.t('pieces.empty_library')}</p>
+          <p class="text-xs text-on-surface-variant opacity-60 max-w-xs mx-auto">{i18n.t('pieces.empty_hint')}</p>
         </div>
       {/if}
     {/if}
