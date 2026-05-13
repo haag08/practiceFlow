@@ -31,7 +31,10 @@
 	const isLoginPage = $derived(page.url.pathname === base + '/login');
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<title>Practice Flow</title>
+	<link rel="icon" href={favicon} />
+</svelte:head>
 
 {#if authStore.loading}
 <div class="min-h-screen bg-surface flex items-center justify-center">
