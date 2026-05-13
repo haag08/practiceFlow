@@ -23,7 +23,9 @@
   let goalProgress = $derived(profile ? (totalWeeklyHours / profile.weekly_goal_hours) * 100 : 0);
 
   // Formatted Data for Chart
-  const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const daysEn = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  const daysDe = ['S', 'M', 'D', 'M', 'D', 'F', 'S'];
+  let days = $derived(settingsStore.settings.language === 'de' ? daysDe : daysEn);
   let chartData = $derived(() => {
     const data = new Array(7).fill(0).map((_, i) => ({ day: days[i], minutes: 0 }));
     weeklyStats.forEach(stat => {
@@ -57,13 +59,14 @@
   function formatDuration(minutes: number) {
     const h = Math.floor(minutes / 60);
     const m = minutes % 60;
-    if (h > 0) return `${h}h ${m}m`;
-    return `${m}m`;
+    if (h > 0) return `${h}${i18n.t('common.h')} ${m}${i18n.t('common.min')}`;
+    return `${m}${i18n.t('common.min')}`;
   }
 
   function formatDate(iso: string) {
     const d = new Date(iso);
-    return d.toLocaleDateString(undefined, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+    const lang = settingsStore.settings.language === 'de' ? 'de-DE' : 'en-US';
+    return d.toLocaleDateString(lang, { weekday: 'short', hour: '2-digit', minute: '2-digit' });
   }
 </script>
 
@@ -158,7 +161,7 @@
               </div>
               <div>
                 <div class="text-on-surface font-display font-medium text-sm">
-                  {session.total_duration ? formatDuration(session.total_duration) : 'Active Session'}
+                  {session.total_duration ? formatDuration(session.total_duration) : i18n.t('session.active_session')}
                 </div>
                 <div class="text-on-surface-variant font-body text-xs">{formatDate(session.start_time)}</div>
               </div>
