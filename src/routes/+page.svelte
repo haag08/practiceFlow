@@ -130,7 +130,7 @@
   <!-- 3. Primary Start Button & Focus Quick Select -->
   <div class="px-2 space-y-6">
     <div class="grid grid-cols-2 gap-4">
-      {#each ['warmup', 'technique', 'repertoire', 'ensemble'] as type}
+      {#each ['warmup', 'technique'] as type}
         <a href="{base}/session?type={type}" class="block">
           <Button variant="secondary" class="w-full h-14 !rounded-2xl flex flex-col items-center justify-center gap-1 group relative overflow-hidden !bg-surface-container-highest hover:!bg-primary/20 border border-white/5 transition-all">
             <span class="text-xs font-body font-bold uppercase tracking-widest text-on-surface-variant group-hover:text-primary transition-colors">{i18n.t('session.' + type)}</span>
