@@ -6,7 +6,8 @@ class SettingsStore {
     dark_mode: true,
     notifications: true,
     default_bpm: 120,
-    tuning_freq: 440.0
+    tuning_freq: 440.0,
+    language: 'en'
   });
   loading = $state(true);
 
