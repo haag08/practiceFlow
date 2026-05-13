@@ -7,6 +7,7 @@
   import { MetronomeEngine } from '$lib/features/MetronomeEngine';
   import { authStore } from '$lib/stores/auth.svelte';
   import { dbService } from '$lib/services/dbService';
+  import { i18n } from '$lib/i18n.svelte';
 
   let bpm = $state(120);
   let isPlaying = $state(false);
@@ -128,7 +129,7 @@
 </script>
 
 <div class="p-4 pt-12 space-y-8 animate-fade-in pb-28 flex flex-col h-full min-h-screen">
-  <SectionHeader title="Metronome" subtitle="Find your rhythm" />
+  <SectionHeader title={i18n.t('metronome.title')} subtitle={i18n.t('metronome.subtitle')} />
   
   <!-- 1. Grosser BPM Kreis -->
   <div class="flex-1 flex flex-col items-center justify-center py-6 relative">
@@ -244,7 +245,7 @@
         onclick={handleTap}
         class="flex-1 py-2 rounded-xl bg-surface-container-highest text-primary font-display font-medium ghost-border active:scale-95 transition-transform"
       >
-        TAP TEMPO
+        {i18n.t('metronome.tap_tempo')}
       </button>
     </div>
   </Card>
@@ -264,7 +265,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 ml-1">
           <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
         </svg>
-        Start
+        {i18n.t('common.start')}
       {/if}
     </Button>
   </div>
