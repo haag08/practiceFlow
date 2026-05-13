@@ -20,8 +20,11 @@ const translations: any = {
       h: 'h'
     },
     home: {
-      greeting: 'Good Evening',
-      ready_session: 'Ready for your Nocturnal Session?',
+      greeting_morning: 'Good Morning',
+      greeting_afternoon: 'Good Afternoon',
+      greeting_evening: 'Good Evening',
+      greeting_night: 'Good Night',
+      ready_session: 'Ready for your session?',
       start_session: 'Start Practice Session',
       todays_plan: "Today's Plan",
       quick_access: 'Quick Access',
@@ -155,7 +158,10 @@ const translations: any = {
       h: 'Std.'
     },
     home: {
-      greeting: 'Guten Abend',
+      greeting_morning: 'Guten Morgen',
+      greeting_afternoon: 'Guten Tag',
+      greeting_evening: 'Guten Abend',
+      greeting_night: 'Gute Nacht',
       ready_session: 'Bereit für deine Session?',
       start_session: 'Übungseinheit starten',
       todays_plan: 'Heutiger Plan',
