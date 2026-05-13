@@ -23,17 +23,18 @@
   // Weekly Goal logic
   let goalProgress = $derived(profile ? (totalWeeklyHours / profile.weekly_goal_hours) * 100 : 0);
 
-  // Formatted Data for Chart
-  const daysEn = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  const daysDe = ['S', 'M', 'D', 'M', 'D', 'F', 'S'];
+  // Formatted Data for Chart (Starting with Monday)
+  const daysEn = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const daysDe = ['M', 'D', 'M', 'D', 'F', 'S', 'S'];
   let days = $derived(settingsStore.settings.language === 'de' ? daysDe : daysEn);
   let chartData = $derived(() => {
+    // Array index 0 = Monday, 6 = Sunday
     const data = new Array(7).fill(0).map((_, i) => ({ day: days[i], minutes: 0 }));
     weeklyStats.forEach(stat => {
-      const d = new Date(stat.date).getDay();
-      data[d].minutes = stat.total_minutes;
+      const d = new Date(stat.date).getDay(); // 0 = Sunday, 1 = Monday...
+      const mappedIndex = (d + 6) % 7; // Monday (1) becomes 0, Sunday (0) becomes 6
+      data[mappedIndex].minutes = stat.total_minutes;
     });
-    // Reorder to start with Monday (optional, keeping S-S for now)
     return data;
   });
 
