@@ -155,26 +155,65 @@ export const dbService = {
 
   // Pieces Management
   async createFolder(userId: string, folderName: string) {
-    // Simple implementation using a 'folders' table
-    return await supabase.from('folders').insert({ user_id: userId, name: folderName });
+    return await supabase.from('folders').insert({ user_id: userId, name: folderName }).select().single();
   },
 
   async getFolders(userId: string) {
-    const { data, error } = await supabase
+    return await supabase
       .from('folders')
       .select('*')
       .eq('user_id', userId)
       .order('name');
-    return { data, error };
   },
 
-  async uploadPieceFile(userId: string, folderName: string, file: File) {
-    const path = `${userId}/${folderName}/${file.name}`;
-    return await supabase.storage.from('pieces').upload(path, file);
+  async deleteFolder(folderId: string) {
+    return await supabase.from('folders').delete().eq('id', folderId);
   },
 
-  async listPieceFiles(userId: string, folderName: string) {
-    const { data, error } = await supabase.storage.from('pieces').list(`${userId}/${folderName}`);
-    return { data, error };
+  async uploadPieceFile(userId: string, folderId: string | null, file: File) {
+    // 1. Upload to Storage
+    const timestamp = Date.now();
+    const storagePath = `${userId}/${folderId || 'root'}/${timestamp}_${file.name}`;
+    
+    const { data: storageData, error: storageError } = await supabase.storage
+      .from('pieces')
+      .upload(storagePath, file);
+
+    if (storageError) return { data: null, error: storageError };
+
+    // 2. Save to DB
+    return await supabase.from('pieces_files').insert({
+      user_id: userId,
+      folder_id: folderId,
+      name: file.name,
+      storage_path: storagePath
+    }).select().single();
   },
 
+  async getPieces(userId: string, folderId: string | null) {
+    let query = supabase
+      .from('pieces_files')
+      .select('*')
+      .eq('user_id', userId);
+    
+    if (folderId) {
+      query = query.eq('folder_id', folderId);
+    } else {
+      query = query.is('folder_id', null);
+    }
+
+    return await query.order('created_at', { ascending: false });
+  },
+
+  async deletePiece(pieceId: string, storagePath: string) {
+    // 1. Delete from Storage
+    await supabase.storage.from('pieces').remove([storagePath]);
+    
+    // 2. Delete from DB
+    return await supabase.from('pieces_files').delete().eq('id', pieceId);
+  },
+
+  getPiecePublicUrl(storagePath: string) {
+    return supabase.storage.from('pieces').getPublicUrl(storagePath).data.publicUrl;
+  }
+};
