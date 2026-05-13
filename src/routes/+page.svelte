@@ -13,7 +13,7 @@
   // State
   let loading = $state(true);
   let profile = $state<any>(null);
-  let todayStats = $state({ total_minutes: 0, session_count: 0 });
+  let todayStats = $state({ total_minutes: 0, sessions_count: 0 });
   let streak = $state(0);
   let greetingKey = $state('greeting_evening');
 
@@ -40,8 +40,11 @@
       dbService.getDailyStats(authStore.user!.id, 30) // For streak
     ]);
     
+    const today = new Date().toISOString().split('T')[0];
     profile = prof.data;
-    todayStats = stats.data?.[0] || { total_minutes: 0, session_count: 0 };
+    
+    // Find today's stats from the data
+    todayStats = stats.data?.find((s: any) => s.date === today) || { total_minutes: 0, sessions_count: 0 };
     
     // Calculate streak
     if (allStats.data) {
@@ -125,6 +128,37 @@
         <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-body">{i18n.t('home.streak')}</span>
       </div>
     {/if}
+  </div>
+
+  <!-- Progress Overview -->
+  <div class="px-2">
+    <Card level={2} padding="lg" class="!rounded-[2.5rem] glass-shadow border border-white/5 flex items-center justify-between relative overflow-hidden group">
+      <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+      
+      <div class="flex flex-col gap-1">
+        <span class="text-on-surface-variant font-body text-xs font-bold uppercase tracking-widest">{i18n.t('home.todays_progress')}</span>
+        <h2 class="text-2xl font-display font-bold text-on-surface">
+          {todayStats.total_minutes || 0} <span class="text-sm font-normal text-on-surface-variant">/ {Math.round(profile?.weekly_goal_hours * 60 / 7 || 60)} {i18n.t('common.min')}</span>
+        </h2>
+        <p class="text-[10px] text-tertiary font-medium uppercase tracking-wider mt-1">
+          {todayStats.sessions_count || 0} {i18n.t('progress.sessions')} {i18n.t('common.done').toLowerCase()}
+        </p>
+      </div>
+
+      <div class="relative">
+        <ProgressRing 
+          progress={todayStats.total_minutes} 
+          target={Math.round(profile?.weekly_goal_hours * 60 / 7 || 60)} 
+          size={100} 
+          strokeWidth={8}
+        />
+        <div class="absolute inset-0 flex items-center justify-center">
+          <span class="text-xs font-display font-bold text-primary">
+            {Math.round((todayStats.total_minutes / (profile?.weekly_goal_hours * 60 / 7 || 60)) * 100)}%
+          </span>
+        </div>
+      </div>
+    </Card>
   </div>
 
   <!-- 3. Primary Start Button & Focus Quick Select -->
