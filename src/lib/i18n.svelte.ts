@@ -113,7 +113,17 @@ const translations: any = {
       warmup: 'Warmup',
       technique: 'Technique',
       repertoire: 'Repertoire',
-      ensemble: 'Ensemble'
+      ensemble: 'Ensemble',
+      quotes: [
+        "Focus is the key to mastery.",
+        "Every minute of practice brings you closer to your goal.",
+        "Listen to the silence between the notes.",
+        "Your only competition is who you were yesterday.",
+        "Great things take time. Keep going.",
+        "Precision first, speed will follow.",
+        "Don't practice until you get it right, practice until you can't get it wrong.",
+        "Consistency is the hallmark of the masters."
+      ]
     },
     auth: {
       welcome_back: 'Welcome back to your sanctuary',
@@ -244,14 +254,24 @@ const translations: any = {
       no_sessions: 'Noch keine Sessions aufgezeichnet.'
     },
     session: {
-      active_session: 'Aktive Session',
+      active_session: 'Active Session',
       current_focus: 'Aktueller Fokus',
       completed_blocks: 'Abgeschlossene Blöcke',
       finish_session: 'Session beenden',
       warmup: 'Einspielen',
       technique: 'Technik',
       repertoire: 'Repertoire',
-      ensemble: 'Ensemble'
+      ensemble: 'Ensemble',
+      quotes: [
+        "Fokus ist der Schlüssel zur Meisterschaft.",
+        "Jede Minute Übung bringt dich deinem Ziel näher.",
+        "Höre auf die Stille zwischen den Noten.",
+        "Deine einzige Konkurrenz ist die Person, die du gestern warst.",
+        "Große Dinge brauchen Zeit. Bleib dran.",
+        "Präzision zuerst, Schnelligkeit folgt von selbst.",
+        "Übe nicht, bis du es richtig machst. Übe, bis du es nicht mehr falsch machen kannst.",
+        "Beständigkeit ist das Markenzeichen der Meister."
+      ]
     },
     auth: {
       welcome_back: 'Willkommen zurück in deinem Rückzugsort',
