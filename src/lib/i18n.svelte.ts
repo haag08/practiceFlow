@@ -107,6 +107,9 @@ const translations: any = {
     },
     session: {
       active_session: 'Active Session',
+      choose_mode: 'Choose Session Mode',
+      stopwatch: 'Stopwatch',
+      timer: 'Timer',
       current_focus: 'Current Focus',
       completed_blocks: 'Completed Blocks',
       finish_session: 'Finish Session',
@@ -259,7 +262,10 @@ const translations: any = {
       no_sessions: 'Noch keine Sessions aufgezeichnet.'
     },
     session: {
-      active_session: 'Active Session',
+      active_session: 'Aktive Session',
+      choose_mode: 'Sitzungsmodus wählen',
+      stopwatch: 'Stoppuhr',
+      timer: 'Timer',
       current_focus: 'Aktueller Fokus',
       completed_blocks: 'Abgeschlossene Blöcke',
       finish_session: 'Session beenden',
