@@ -153,6 +153,10 @@ export const dbService = {
       .upload(path, file);
   },
 
+  getPublicAvatarUrl(path: string) {
+    return supabase.storage.from('avatars').getPublicUrl(path);
+  },
+
   // Pieces Management
   async createFolder(userId: string, folderName: string) {
     return await supabase.from('folders').insert({ user_id: userId, name: folderName }).select().single();
@@ -214,6 +218,6 @@ export const dbService = {
   },
 
   getPiecePublicUrl(storagePath: string) {
-    return supabase.storage.from('pieces').getPublicUrl(storagePath).data.publicUrl;
+    return supabase.storage.from('pieces').getPublicUrl(storagePath);
   }
 };
