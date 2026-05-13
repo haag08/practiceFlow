@@ -27,11 +27,11 @@
   let detections = 0;
 
   // Instruments mapping (semitones to transpose to display the WRITTEN note for the player)
-  const instruments = [
-    { label: 'Chromatic', transpose: 0 },
-    { label: 'Clarinet (Bb)', transpose: 2 }, // Sounds Bb -> written C
-    { label: 'Piano', transpose: 0 }
-  ];
+  const instruments = $derived([
+    { label: i18n.t('tuner.instruments.chromatic'), transpose: 0 },
+    { label: i18n.t('tuner.instruments.clarinet'), transpose: 2 },
+    { label: i18n.t('tuner.instruments.piano'), transpose: 0 }
+  ]);
   let selectedInstrument = $state(instruments[0]);
 
   const noteStrings = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
