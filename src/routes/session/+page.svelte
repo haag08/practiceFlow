@@ -25,6 +25,13 @@
   let currentQuote = $derived(quotes[currentQuoteIndex]);
   let quoteInterval: any;
 
+  // Timer logic
+  let targetSeconds = $state(0);
+  let timerElapsed = $state(0);
+  let showTimerSetup = $state(false);
+  let showCongrats = $state(false);
+  let timerInput = $state(15);
+
   onMount(async () => {
     if (!authStore.user) {
       goto(base + '/login');
@@ -39,6 +46,16 @@
 
     timerInterval = setInterval(() => {
       elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      
+      if (targetSeconds > 0 && timerElapsed < targetSeconds) {
+        timerElapsed++;
+        if (timerElapsed >= targetSeconds) {
+          showCongrats = true;
+          // Reset timer after showing congrats
+          targetSeconds = 0;
+          timerElapsed = 0;
+        }
+      }
     }, 1000);
 
     // Motivational quotes rotation (every 30 seconds)
@@ -86,6 +103,13 @@
     goto(base + '/');
   }
 
+  function startTimer() {
+    targetSeconds = timerInput * 60;
+    timerElapsed = 0;
+    showTimerSetup = false;
+    showCongrats = false;
+  }
+
   onDestroy(() => {
     clearInterval(timerInterval);
     clearInterval(quoteInterval);
@@ -95,9 +119,16 @@
 <div class="p-6 pt-16 flex flex-col items-center justify-center min-h-screen bg-surface text-on-surface">
   <div class="w-full max-w-md space-y-8 animate-fade-in">
     <div class="text-center space-y-4">
-      <div class="space-y-2">
+      <div class="space-y-2 relative">
         <span class="text-primary font-body text-sm font-bold uppercase tracking-[0.3em]">{i18n.t('session.active_session')}</span>
         <h1 class="text-6xl font-display font-light tracking-tighter">{formatTime(elapsedSeconds)}</h1>
+        
+        {#if targetSeconds > 0}
+          <div class="absolute -right-4 top-1/2 -translate-y-1/2 flex flex-col items-end animate-pulse">
+            <span class="text-[0.6rem] font-bold text-tertiary uppercase tracking-widest">{i18n.t('session.remaining')}</span>
+            <span class="text-xl font-display text-tertiary">{formatTime(targetSeconds - timerElapsed)}</span>
+          </div>
+        {/if}
       </div>
       
       {#if currentQuote}
@@ -125,10 +156,44 @@
           </div>
         </div>
       {:else}
-        <div class="flex items-center justify-center py-2">
+        <div class="flex items-center justify-between py-2">
           <div class="px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-display font-bold text-sm uppercase tracking-widest">
             {i18n.t('session.' + currentBlockType)}
           </div>
+          
+          <button 
+            onclick={() => showTimerSetup = !showTimerSetup}
+            class="p-2 rounded-xl bg-surface-container-highest text-on-surface-variant hover:text-primary transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        </div>
+      {/if}
+
+      {#if showTimerSetup}
+        <div class="p-4 rounded-2xl bg-surface-container-lowest border border-primary/20 animate-fade-in space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-bold text-on-surface uppercase tracking-wider">{i18n.t('session.set_timer')}</span>
+            <span class="text-lg font-display text-primary">{timerInput} {i18n.t('session.minutes')}</span>
+          </div>
+          <input 
+            type="range" 
+            min="1" 
+            max="60" 
+            bind:value={timerInput}
+            class="w-full accent-primary"
+          />
+          <Button onclick={startTimer} class="w-full !h-10 !rounded-xl !text-sm">{i18n.t('common.start')}</Button>
+        </div>
+      {/if}
+
+      {#if showCongrats}
+        <div class="p-6 rounded-2xl bg-tertiary/10 border border-tertiary/30 text-center space-y-2 animate-bounce-in" transition:fade>
+          <h3 class="text-xl font-display font-bold text-tertiary">{i18n.t('session.congrats')}</h3>
+          <p class="text-sm text-on-surface-variant">{i18n.t('session.congrats_msg')}</p>
+          <Button variant="secondary" onclick={() => showCongrats = false} class="!h-10 !rounded-xl !text-xs !bg-tertiary/20">{i18n.t('common.done')}</Button>
         </div>
       {/if}
 
