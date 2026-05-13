@@ -8,11 +8,13 @@
   import { base } from '$app/paths';
   import { authStore } from '$lib/stores/auth.svelte';
   import { dbService } from '$lib/services/dbService';
+  import { i18n } from '$lib/i18n.svelte';
 
   // State
   let loading = $state(true);
   let profile = $state<any>(null);
-  let todayStats = $state<any>(null);
+  let todayStats = $state({ total_minutes: 0, session_count: 0 });
+  let streak = $state(0);
 
   onMount(() => {
     if (authStore.user) {
@@ -29,7 +31,7 @@
     ]);
     
     profile = prof.data;
-    todayStats = stats.data?.[0] || { total_minutes: 0, sessions_count: 0 };
+    todayStats = stats.data?.[0] || { total_minutes: 0, session_count: 0 };
     
     // Calculate streak
     if (allStats.data) {
@@ -66,15 +68,6 @@
     }
     return currentStreak;
   }
-  
-  let streak = $state(0);
-  
-  import { i18n } from '$lib/i18n.svelte';
-
-  let loading = $state(true);
-  let profile = $state<any>(null);
-  let todayStats = $state({ total_minutes: 0, session_count: 0 });
-  let streak = $state(0);
   
   const practiceItems = $derived([
     { title: 'Warmup', subtitle: 'Long tones & lip slurs', duration: '10 min', icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
@@ -146,7 +139,7 @@
         <div class="h-24 w-full bg-surface-container-high/20 animate-pulse rounded-3xl"></div>
       </div>
     {:else}
-      <SectionHeader title={i18n.t('home.todays_plan')} subtitle="{todayStats.total_minutes} / {profile?.weekly_goal_hours * 60 / 7 | 0} minutes today" />
+      <SectionHeader title={i18n.t('home.todays_plan')} subtitle="{(todayStats.total_minutes || 0)} / {(profile?.weekly_goal_hours * 60 / 7 | 0)} minutes today" />
       
       <div class="space-y-4 px-2">
         {#each practiceItems as item}
@@ -208,4 +201,3 @@
     100% { transform: translateX(100%); }
   }
 </style>
-
