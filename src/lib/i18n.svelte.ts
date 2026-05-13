@@ -10,7 +10,12 @@ const translations: any = {
       back: 'Back',
       upload: 'Upload',
       create: 'Create',
-      logout: 'Logout'
+      logout: 'Logout',
+      start: 'Start',
+      pause: 'Pause',
+      stop: 'Stop',
+      done: 'Done',
+      live: 'Live'
     },
     home: {
       greeting: 'Good Evening',
@@ -47,11 +52,72 @@ const translations: any = {
       empty_library: 'Your library is empty.',
       empty_hint: 'Create a folder or upload your first piece of sheet music to get started.'
     },
+    metronome: {
+      title: 'Metronome',
+      subtitle: 'Find your rhythm',
+      tap_tempo: 'TAP TEMPO',
+      sound: 'Sound',
+      volume: 'Volume'
+    },
+    tuner: {
+      title: 'Tuner',
+      subtitle: 'Perfect your intonation',
+      listening: 'Listening...',
+      ref_tone: 'Ref Tone',
+      flat: 'Flat',
+      perfect: 'Perfect',
+      sharp: 'Sharp',
+      cents: 'cents'
+    },
+    progress: {
+      title: 'Progress',
+      subtitle: 'Your musical journey',
+      weekly_consistency: 'Great consistency this week! Keep it up.',
+      ready_today: 'Ready for a focused session today?',
+      current_streak: 'Current Streak',
+      days: 'days',
+      weekly_goal: 'Weekly Goal',
+      this_week: 'This Week',
+      total: 'total',
+      total_hours: 'Total Hours',
+      this_month: 'This month',
+      sessions: 'Sessions',
+      recent_history: 'Recent history',
+      recent_sessions: 'Recent Sessions',
+      no_sessions: 'No sessions recorded yet.'
+    },
+    session: {
+      active_session: 'Active Session',
+      current_focus: 'Current Focus',
+      completed_blocks: 'Completed Blocks',
+      finish_session: 'Finish Session',
+      warmup: 'Warmup',
+      technique: 'Technique',
+      repertoire: 'Repertoire',
+      ensemble: 'Ensemble'
+    },
+    auth: {
+      welcome_back: 'Welcome back to your sanctuary',
+      start_journey: 'Start your musical journey today',
+      full_name: 'Full Name',
+      username: 'Username',
+      email: 'Email',
+      password: 'Password',
+      sign_in: 'Sign In',
+      create_account: 'Create Account',
+      no_account: "Don't have an account? Sign Up",
+      has_account: 'Already have an account? Sign In',
+      processing: 'Processing...',
+      confirm_email: 'Check your email to confirm your account!'
+    },
     nav: {
       home: 'Home',
       pieces: 'Pieces',
       progress: 'Progress',
-      profile: 'Profile'
+      profile: 'Profile',
+      metronome: 'Metronome',
+      tuner: 'Tuner',
+      timer: 'Timer'
     }
   },
   de: {
@@ -63,7 +129,12 @@ const translations: any = {
       back: 'Zurück',
       upload: 'Hochladen',
       create: 'Erstellen',
-      logout: 'Abmelden'
+      logout: 'Abmelden',
+      start: 'Start',
+      pause: 'Pause',
+      stop: 'Stop',
+      done: 'Fertig',
+      live: 'Live'
     },
     home: {
       greeting: 'Guten Abend',
@@ -100,11 +171,72 @@ const translations: any = {
       empty_library: 'Deine Bibliothek ist leer.',
       empty_hint: 'Erstelle einen Ordner oder lade dein erstes Stück hoch, um anzufangen.'
     },
+    metronome: {
+      title: 'Metronom',
+      subtitle: 'Finde deinen Rhythmus',
+      tap_tempo: 'TAP TEMPO',
+      sound: 'Sound',
+      volume: 'Lautstärke'
+    },
+    tuner: {
+      title: 'Stimmgerät',
+      subtitle: 'Perfektioniere deine Intonation',
+      listening: 'Höre zu...',
+      ref_tone: 'Ref. Ton',
+      flat: 'Zu tief',
+      perfect: 'Perfekt',
+      sharp: 'Zu hoch',
+      cents: 'Cents'
+    },
+    progress: {
+      title: 'Fortschritt',
+      subtitle: 'Deine musikalische Reise',
+      weekly_consistency: 'Tolle Beständigkeit diese Woche! Mach weiter so.',
+      ready_today: 'Bereit für eine fokussierte Session heute?',
+      current_streak: 'Aktuelle Serie',
+      days: 'Tage',
+      weekly_goal: 'Wochenziel',
+      this_week: 'Diese Woche',
+      total: 'gesamt',
+      total_hours: 'Gesamtstunden',
+      this_month: 'Diesen Monat',
+      sessions: 'Sessions',
+      recent_history: 'Letzte Aktivitäten',
+      recent_sessions: 'Letzte Sessions',
+      no_sessions: 'Noch keine Sessions aufgezeichnet.'
+    },
+    session: {
+      active_session: 'Aktive Session',
+      current_focus: 'Aktueller Fokus',
+      completed_blocks: 'Abgeschlossene Blöcke',
+      finish_session: 'Session beenden',
+      warmup: 'Einspielen',
+      technique: 'Technik',
+      repertoire: 'Repertoire',
+      ensemble: 'Ensemble'
+    },
+    auth: {
+      welcome_back: 'Willkommen zurück in deinem Rückzugsort',
+      start_journey: 'Beginne heute deine musikalische Reise',
+      full_name: 'Vollständiger Name',
+      username: 'Benutzername',
+      email: 'E-Mail',
+      password: 'Passwort',
+      sign_in: 'Anmelden',
+      create_account: 'Konto erstellen',
+      no_account: 'Noch kein Konto? Registrieren',
+      has_account: 'Bereits ein Konto? Anmelden',
+      processing: 'Wird verarbeitet...',
+      confirm_email: 'Prüfe deine E-Mails, um dein Konto zu bestätigen!'
+    },
     nav: {
       home: 'Home',
       pieces: 'Noten',
       progress: 'Fortschritt',
-      profile: 'Profil'
+      profile: 'Profil',
+      metronome: 'Metronom',
+      tuner: 'Stimmgerät',
+      timer: 'Timer'
     }
   }
 };
@@ -116,7 +248,7 @@ class I18nStore {
     let current = translations[lang];
     
     for (const key of keys) {
-      if (current[key] === undefined) return path;
+      if (!current || current[key] === undefined) return path;
       current = current[key];
     }
     
