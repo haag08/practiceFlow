@@ -15,7 +15,9 @@ const translations: any = {
       pause: 'Pause',
       stop: 'Stop',
       done: 'Done',
-      live: 'Live'
+      live: 'Live',
+      min_today: 'minutes today',
+      h: 'h'
     },
     home: {
       greeting: 'Good Evening',
@@ -24,7 +26,11 @@ const translations: any = {
       todays_plan: "Today's Plan",
       quick_access: 'Quick Access',
       streak: 'Day Streak',
-      target: 'Target'
+      target: 'Target',
+      warmup: 'Warmup',
+      warmup_sub: 'Long tones & lip slurs',
+      technique: 'Technique',
+      technique_sub: 'C Major Scale (120 BPM)'
     },
     profile: {
       title: 'Profile',
@@ -57,7 +63,12 @@ const translations: any = {
       subtitle: 'Find your rhythm',
       tap_tempo: 'TAP TEMPO',
       sound: 'Sound',
-      volume: 'Volume'
+      volume: 'Volume',
+      sounds: {
+        classic: 'Classic',
+        woodblock: 'Woodblock',
+        digital: 'Digital'
+      }
     },
     tuner: {
       title: 'Tuner',
@@ -67,7 +78,12 @@ const translations: any = {
       flat: 'Flat',
       perfect: 'Perfect',
       sharp: 'Sharp',
-      cents: 'cents'
+      cents: 'cents',
+      instruments: {
+        chromatic: 'Chromatic',
+        clarinet: 'Clarinet (Bb)',
+        piano: 'Piano'
+      }
     },
     progress: {
       title: 'Progress',
@@ -132,9 +148,11 @@ const translations: any = {
       logout: 'Abmelden',
       start: 'Start',
       pause: 'Pause',
-      stop: 'Stop',
+      stop: 'Stopp',
       done: 'Fertig',
-      live: 'Live'
+      live: 'Live',
+      min_today: 'Minuten heute',
+      h: 'Std.'
     },
     home: {
       greeting: 'Guten Abend',
@@ -143,7 +161,11 @@ const translations: any = {
       todays_plan: 'Heutiger Plan',
       quick_access: 'Schnellzugriff',
       streak: 'Tage am Stück',
-      target: 'Ziel'
+      target: 'Ziel',
+      warmup: 'Einspielen',
+      warmup_sub: 'Lange Töne & Bindungen',
+      technique: 'Technik',
+      technique_sub: 'C-Dur Tonleiter (120 BPM)'
     },
     profile: {
       title: 'Profil',
@@ -176,7 +198,12 @@ const translations: any = {
       subtitle: 'Finde deinen Rhythmus',
       tap_tempo: 'TAP TEMPO',
       sound: 'Sound',
-      volume: 'Lautstärke'
+      volume: 'Lautstärke',
+      sounds: {
+        classic: 'Klassisch',
+        woodblock: 'Holzblock',
+        digital: 'Digital'
+      }
     },
     tuner: {
       title: 'Stimmgerät',
@@ -186,7 +213,12 @@ const translations: any = {
       flat: 'Zu tief',
       perfect: 'Perfekt',
       sharp: 'Zu hoch',
-      cents: 'Cents'
+      cents: 'Cents',
+      instruments: {
+        chromatic: 'Chromatisch',
+        clarinet: 'Klarinette (B)',
+        piano: 'Klavier'
+      }
     },
     progress: {
       title: 'Fortschritt',
