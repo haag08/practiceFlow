@@ -1,5 +1,16 @@
+<script lang="ts">
+  import SectionHeader from '$lib/components/SectionHeader.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Button from '$lib/components/Button.svelte';
+  import { onMount } from 'svelte';
+  import { base } from '$app/paths';
+  import { goto } from '$app/navigation';
+  import { authStore } from '$lib/stores/auth.svelte';
+  import { authService } from '$lib/services/authService';
+  import { dbService } from '$lib/services/dbService';
   import { settingsStore } from '$lib/stores/settings.svelte';
   import { i18n } from '$lib/i18n.svelte';
+  import { fade } from 'svelte/transition';
 
   // State
   let loading = $state(true);
@@ -106,7 +117,7 @@
         <h3 class="text-2xl font-display font-bold text-on-surface tracking-tight">{userData.full_name || userData.username}</h3>
         <p class="text-on-surface-variant font-body text-sm mb-2">{i18n.t('profile.member_since')} {new Date(userData.created_at).getFullYear()}</p>
         <div class="flex flex-wrap gap-2">
-          {#each userData.instruments as inst}
+          {#each userData.instruments || [] as inst}
             <span class="px-3 py-1 rounded-full bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">
               {inst}
             </span>
@@ -125,7 +136,7 @@
         <div class="h-full bg-gradient-to-r from-primary to-tertiary rounded-full transition-all duration-1000" style="width: {goalProgress}%"></div>
       </div>
       <div class="flex justify-between text-xs text-on-surface-variant font-body">
-        <span>{todayMinutes}{i18n.t('profile.practiced_today')}</span>
+        <span>{todayMinutes} {i18n.t('profile.practiced_today')}</span>
         <div class="flex items-center gap-2">
           <span>{i18n.t('home.target')}:</span>
           <input 
@@ -276,7 +287,7 @@
 
           <div class="pt-4 border-t border-white/5">
             <label class="flex items-center justify-center gap-3 w-full h-14 bg-primary/10 border border-primary/20 text-primary rounded-2xl font-display font-medium cursor-pointer hover:bg-primary/20 transition-all">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>
               {i18n.t('profile.upload_photo')}
               <input type="file" accept="image/*" class="hidden" onchange={handlePhotoUpload} />
             </label>
