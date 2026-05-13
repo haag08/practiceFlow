@@ -6,6 +6,7 @@
   import { onMount } from 'svelte';
   import { authStore } from '$lib/stores/auth.svelte';
   import { dbService } from '$lib/services/dbService';
+  import { i18n } from '$lib/i18n.svelte';
 
   // State
   let loading = $state(true);
@@ -69,9 +70,9 @@
 <div class="p-4 pt-12 space-y-8 pb-28 min-h-screen">
   
   <div>
-    <SectionHeader title="Progress" subtitle="Your musical journey" />
+    <SectionHeader title={i18n.t('progress.title')} subtitle={i18n.t('progress.subtitle')} />
     <div class="mt-2 text-tertiary font-body text-sm font-medium animate-pulse">
-      {totalWeeklyHours > (profile?.weekly_goal_hours * 0.5) ? "Great consistency this week! Keep it up." : "Ready for a focused session today?"}
+      {totalWeeklyHours > (profile?.weekly_goal_hours * 0.5) ? i18n.t('progress.weekly_consistency') : i18n.t('progress.ready_today')}
     </div>
   </div>
 
@@ -85,10 +86,10 @@
     <!-- Goals & Streak (Top Highlight) -->
     <div class="grid grid-cols-2 gap-4">
       <Card level={2} padding="default" class="flex flex-col items-center justify-center text-center !rounded-3xl glass-shadow">
-        <span class="text-on-surface-variant font-body text-sm mb-2">Current Streak</span>
+        <span class="text-on-surface-variant font-body text-sm mb-2">{i18n.t('progress.current_streak')}</span>
         <div class="flex items-baseline gap-1 text-tertiary">
           <span class="text-[3rem] leading-none font-display font-light">{weeklyStats.filter(s => s.total_minutes > 0).length}</span>
-          <span class="text-sm font-body">days</span>
+          <span class="text-sm font-body">{i18n.t('progress.days')}</span>
         </div>
         <div class="flex gap-1 mt-3">
           {#each [1, 2, 3, 4, 5] as _, i}
@@ -98,7 +99,7 @@
       </Card>
 
       <Card level={1} padding="default" class="flex flex-col items-center justify-center text-center !rounded-3xl border border-white/5 relative overflow-hidden">
-        <span class="text-on-surface-variant font-body text-sm mb-2 z-10">Weekly Goal</span>
+        <span class="text-on-surface-variant font-body text-sm mb-2 z-10">{i18n.t('progress.weekly_goal')}</span>
         <div class="z-10 mt-1">
           <ProgressRing progress={mounted ? goalProgress : 0} size={80} strokeWidth={6} color="var(--color-primary)" trackColor="var(--color-surface-container-highest)">
             <div class="flex flex-col items-center">
@@ -113,8 +114,8 @@
     <!-- Weekly Bar Chart -->
     <Card level={1} padding="default" class="border border-white/5 !rounded-3xl">
       <div class="flex justify-between items-end mb-6">
-        <span class="text-on-surface font-display font-medium text-lg">This Week</span>
-        <span class="text-primary font-body text-sm">{formatDuration(totalWeeklyMinutes)} total</span>
+        <span class="text-on-surface font-display font-medium text-lg">{i18n.t('progress.this_week')}</span>
+        <span class="text-primary font-body text-sm">{formatDuration(totalWeeklyMinutes)} {i18n.t('progress.total')}</span>
       </div>
       
       <div class="h-40 flex items-end justify-between gap-2 relative">
@@ -141,13 +142,13 @@
 
     <!-- Monthly Stats -->
     <div class="grid grid-cols-2 gap-4">
-      <StatCard title="Total Hours" value={Math.floor(totalWeeklyHours)} subtitle="This month" />
-      <StatCard title="Sessions" value={recentSessions.length} subtitle="Recent history" />
+      <StatCard title={i18n.t('progress.total_hours')} value={Math.floor(totalWeeklyHours)} subtitle={i18n.t('progress.this_month')} />
+      <StatCard title={i18n.t('progress.sessions')} value={recentSessions.length} subtitle={i18n.t('progress.recent_history')} />
     </div>
 
     <!-- Recent Sessions List -->
     <div>
-      <SectionHeader title="Recent Sessions" />
+      <SectionHeader title={i18n.t('progress.recent_sessions')} />
       <div class="space-y-3 mt-4">
         {#each recentSessions as session}
           <Card level={1} padding="default" class="flex items-center justify-between !py-3 hover:bg-surface-container transition-colors border border-transparent hover:border-white/5 cursor-pointer">
@@ -163,12 +164,12 @@
               </div>
             </div>
             <div class="text-tertiary font-display font-medium">
-              {session.total_duration ? 'Done' : 'Live'}
+              {session.total_duration ? i18n.t('common.done') : i18n.t('common.live')}
             </div>
           </Card>
         {:else}
           <div class="text-center py-10 text-on-surface-variant font-body text-sm opacity-50">
-            No sessions recorded yet.
+            {i18n.t('progress.no_sessions')}
           </div>
         {/each}
       </div>
