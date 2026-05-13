@@ -1,4 +1,4 @@
-import { settingsStore } from './settings.svelte';
+import { settingsStore } from './stores/settings.svelte';
 
 const translations: any = {
   en: {
