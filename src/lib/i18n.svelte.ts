@@ -33,7 +33,8 @@ const translations: any = {
       warmup: 'Warmup',
       warmup_sub: 'Long tones & lip slurs',
       technique: 'Technique',
-      technique_sub: 'C Major Scale (120 BPM)'
+      technique_sub: 'C Major Scale (120 BPM)',
+      todays_progress: "Today's Progress"
     },
     profile: {
       title: 'Profile',
@@ -189,7 +190,8 @@ const translations: any = {
       warmup: 'Einspielen',
       warmup_sub: 'Lange Töne & Bindungen',
       technique: 'Technik',
-      technique_sub: 'C-Dur Tonleiter (120 BPM)'
+      technique_sub: 'C-Dur Tonleiter (120 BPM)',
+      todays_progress: 'Heutiger Fortschritt'
     },
     profile: {
       title: 'Profil',
