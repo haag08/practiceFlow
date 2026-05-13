@@ -7,6 +7,7 @@
   import { authStore } from '$lib/stores/auth.svelte';
   import { dbService } from '$lib/services/dbService';
   import { i18n } from '$lib/i18n.svelte';
+  import { settingsStore } from '$lib/stores/settings.svelte';
 
   // State
   let loading = $state(true);
@@ -43,17 +44,22 @@
   });
 
   async function loadStats() {
-    loading = true;
-    const [stats, sessions, prof] = await Promise.all([
-      dbService.getDailyStats(authStore.user!.id, 7),
-      dbService.getRecentSessions(authStore.user!.id, 10),
-      dbService.getProfile(authStore.user!.id)
-    ]);
-    
-    weeklyStats = stats.data || [];
-    recentSessions = sessions.data || [];
-    profile = prof.data;
-    loading = false;
+    try {
+      loading = true;
+      const [stats, sessions, prof] = await Promise.all([
+        dbService.getDailyStats(authStore.user!.id, 7),
+        dbService.getRecentSessions(authStore.user!.id, 10),
+        dbService.getProfile(authStore.user!.id)
+      ]);
+      
+      weeklyStats = stats.data || [];
+      recentSessions = sessions.data || [];
+      profile = prof.data;
+    } catch (e) {
+      console.error('Failed to load stats:', e);
+    } finally {
+      loading = false;
+    }
   }
 
   function formatDuration(minutes: number) {
