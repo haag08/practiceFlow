@@ -69,11 +69,18 @@
   
   let streak = $state(0);
   
-  const practiceItems = [
+  import { i18n } from '$lib/i18n.svelte';
+
+  let loading = $state(true);
+  let profile = $state<any>(null);
+  let todayStats = $state({ total_minutes: 0, session_count: 0 });
+  let streak = $state(0);
+  
+  const practiceItems = $derived([
     { title: 'Warmup', subtitle: 'Long tones & lip slurs', duration: '10 min', icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
     { title: 'Technique', subtitle: 'C Major Scale (120 BPM)', duration: '15 min', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
-    { title: 'Pieces', subtitle: 'Concerto No. 1 - Mvt 1', duration: '20 min', icon: 'M9 19.5v-15m0 0l-5.5 5.5M9 4.5l5.5 5.5M21 15v4.5a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5V15', path: base + '/pieces' }
-  ];
+    { title: i18n.t('nav.pieces'), subtitle: 'Concerto No. 1 - Mvt 1', duration: '20 min', icon: 'M9 19.5v-15m0 0l-5.5 5.5M9 4.5l5.5 5.5M21 15v4.5a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5V15', path: base + '/pieces' }
+  ]);
 
   const quickAccess = [
     { name: 'Metronome', icon: 'M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z', path: base + '/metronome' },
@@ -104,15 +111,15 @@
         </div>
         <div>
           <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-0.5">
-            Good Evening, <span class="gradient-text">{profile?.full_name?.split(' ')[0] || profile?.username || 'Musician'}</span>.
+            {i18n.t('home.greeting')}, <span class="gradient-text">{profile?.full_name?.split(' ')[0] || profile?.username || 'Musician'}</span>.
           </h1>
-          <p class="text-on-surface-variant font-body text-sm opacity-80">Ready for your Nocturnal Session?</p>
+          <p class="text-on-surface-variant font-body text-sm opacity-80">{i18n.t('home.ready_session')}</p>
         </div>
       </div>
       
       <div class="flex flex-col items-center bg-surface-container-high px-4 py-2 rounded-2xl glass-shadow">
         <span class="text-tertiary font-display font-bold text-xl">{streak}</span>
-        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-body">Day Streak</span>
+        <span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-body">{i18n.t('home.streak')}</span>
       </div>
     {/if}
   </div>
@@ -125,7 +132,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
           <path fill-rule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clip-rule="evenodd" />
         </svg>
-        Start Practice Session
+        {i18n.t('home.start_session')}
       </Button>
     </a>
   </div>
@@ -139,7 +146,7 @@
         <div class="h-24 w-full bg-surface-container-high/20 animate-pulse rounded-3xl"></div>
       </div>
     {:else}
-      <SectionHeader title="Today's Plan" subtitle="{todayStats.total_minutes} / {profile?.weekly_goal_hours * 60 / 7 | 0} minutes today" />
+      <SectionHeader title={i18n.t('home.todays_plan')} subtitle="{todayStats.total_minutes} / {profile?.weekly_goal_hours * 60 / 7 | 0} minutes today" />
       
       <div class="space-y-4 px-2">
         {#each practiceItems as item}
@@ -173,7 +180,7 @@
 
   <!-- 6. Quick Access -->
   <div>
-    <SectionHeader title="Quick Access" />
+    <SectionHeader title={i18n.t('home.quick_access')} />
     <div class="grid grid-cols-3 gap-3 px-2">
       {#each quickAccess as access}
         <a href={access.path} class="flex flex-col items-center justify-center gap-3 bg-surface-container-high p-4 rounded-[2rem] hover:bg-surface-container-highest transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] border border-white/5">
@@ -182,7 +189,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" d={access.icon} />
             </svg>
           </div>
-          <span class="font-body text-xs font-medium text-on-surface-variant">{access.name}</span>
+          <span class="font-body text-xs font-medium text-on-surface-variant">{i18n.t('nav.' + access.name.toLowerCase()) !== 'nav.' + access.name.toLowerCase() ? i18n.t('nav.' + access.name.toLowerCase()) : access.name}</span>
         </a>
       {/each}
     </div>
