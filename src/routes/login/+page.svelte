@@ -4,6 +4,7 @@
   import Card from '$lib/components/Card.svelte';
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
+  import { i18n } from '$lib/i18n.svelte';
 
   let mode = $state<'login' | 'signup'>('login');
   let email = $state('');
@@ -22,7 +23,7 @@
         const redirectTo = window.location.origin + base;
         const { error: signUpError } = await authService.signUp(email, password, username, fullName, redirectTo);
         if (signUpError) throw signUpError;
-        alert('Check your email to confirm your account!');
+        alert(i18n.t('auth.confirm_email'));
         mode = 'login';
       } else {
         const { error: signInError } = await authService.signIn(email, password);
@@ -48,7 +49,7 @@
         Practice<span class="gradient-text">Flow</span>
       </h1>
       <p class="text-on-surface-variant font-body tracking-wide opacity-70">
-        {mode === 'login' ? 'Welcome back to your sanctuary' : 'Start your musical journey today'}
+        {mode === 'login' ? i18n.t('auth.welcome_back') : i18n.t('auth.start_journey')}
       </p>
     </div>
 
@@ -56,7 +57,7 @@
       <form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="space-y-5">
         {#if mode === 'signup'}
           <div class="space-y-2">
-            <label for="fullName" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Full Name</label>
+            <label for="fullName" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('auth.full_name')}</label>
             <input 
               id="fullName"
               type="text" 
@@ -67,7 +68,7 @@
             />
           </div>
           <div class="space-y-2">
-            <label for="username" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Username</label>
+            <label for="username" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('auth.username')}</label>
             <input 
               id="username"
               type="text" 
@@ -80,7 +81,7 @@
         {/if}
 
         <div class="space-y-2">
-          <label for="email" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Email</label>
+          <label for="email" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('auth.email')}</label>
           <input 
             id="email"
             type="email" 
@@ -92,7 +93,7 @@
         </div>
 
         <div class="space-y-2">
-          <label for="password" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">Password</label>
+          <label for="password" class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('auth.password')}</label>
           <input 
             id="password"
             type="password" 
@@ -117,10 +118,10 @@
           {#if loading}
             <div class="flex items-center gap-3">
               <div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-              <span>Processing...</span>
+              <span>{i18n.t('auth.processing')}</span>
             </div>
           {:else}
-            <span>{mode === 'login' ? 'Sign In' : 'Create Account'}</span>
+            <span>{mode === 'login' ? i18n.t('auth.sign_in') : i18n.t('auth.create_account')}</span>
           {/if}
           <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
         </Button>
@@ -131,7 +132,7 @@
           onclick={() => mode = mode === 'login' ? 'signup' : 'login'}
           class="text-sm text-on-surface-variant hover:text-primary transition-colors font-body"
         >
-          {mode === 'login' ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
+          {mode === 'login' ? i18n.t('auth.no_account') : i18n.t('auth.has_account')}
         </button>
       </div>
     </Card>
