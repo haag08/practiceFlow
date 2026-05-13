@@ -70,9 +70,9 @@
   }
   
   const practiceItems = $derived([
-    { title: 'Warmup', subtitle: 'Long tones & lip slurs', duration: '10 min', icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
-    { title: 'Technique', subtitle: 'C Major Scale (120 BPM)', duration: '15 min', icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
-    { title: i18n.t('nav.pieces'), subtitle: 'Concerto No. 1 - Mvt 1', duration: '20 min', icon: 'M9 19.5v-15m0 0l-5.5 5.5M9 4.5l5.5 5.5M21 15v4.5a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5V15', path: base + '/pieces' }
+    { title: i18n.t('home.warmup'), subtitle: i18n.t('home.warmup_sub'), duration: `10 ${i18n.t('common.min')}`, icon: 'M15.362 5.214A8.252 8.252 0 0112 21 8.25 8.25 0 016.038 7.048 8.287 8.287 0 009 9.601a8.983 8.983 0 013.361-6.866 8.21 8.21 0 003 2.48z' },
+    { title: i18n.t('home.technique'), subtitle: i18n.t('home.technique_sub'), duration: `15 ${i18n.t('common.min')}`, icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z' },
+    { title: i18n.t('nav.pieces'), subtitle: 'Concerto No. 1 - Mvt 1', duration: `20 ${i18n.t('common.min')}`, icon: 'M9 19.5v-15m0 0l-5.5 5.5M9 4.5l5.5 5.5M21 15v4.5a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5V15', path: base + '/pieces' }
   ]);
 
   const quickAccess = [
@@ -139,7 +139,7 @@
         <div class="h-24 w-full bg-surface-container-high/20 animate-pulse rounded-3xl"></div>
       </div>
     {:else}
-      <SectionHeader title={i18n.t('home.todays_plan')} subtitle="{(todayStats.total_minutes || 0)} / {(profile?.weekly_goal_hours * 60 / 7 | 0)} minutes today" />
+      <SectionHeader title={i18n.t('home.todays_plan')} subtitle="{(todayStats.total_minutes || 0)} / {(profile?.weekly_goal_hours * 60 / 7 | 0)} {i18n.t('common.min_today')}" />
       
       <div class="space-y-4 px-2">
         {#each practiceItems as item}
