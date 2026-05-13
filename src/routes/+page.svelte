@@ -15,8 +15,18 @@
   let profile = $state<any>(null);
   let todayStats = $state({ total_minutes: 0, session_count: 0 });
   let streak = $state(0);
+  let greetingKey = $state('greeting_evening');
+
+  function getGreetingKey() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'greeting_morning';
+    if (hour >= 12 && hour < 18) return 'greeting_afternoon';
+    if (hour >= 18 && hour < 22) return 'greeting_evening';
+    return 'greeting_night';
+  }
 
   onMount(() => {
+    greetingKey = getGreetingKey();
     if (authStore.user) {
       loadHomeData();
     }
@@ -104,7 +114,7 @@
         </div>
         <div>
           <h1 class="text-3xl font-display font-bold text-on-surface tracking-tight mb-0.5">
-            {i18n.t('home.greeting')}, <span class="gradient-text">{profile?.full_name?.split(' ')[0] || profile?.username || 'Musician'}</span>.
+            {i18n.t('home.' + greetingKey)}, <span class="gradient-text">{profile?.full_name?.split(' ')[0] || profile?.username || 'Musician'}</span>.
           </h1>
           <p class="text-on-surface-variant font-body text-sm opacity-80">{i18n.t('home.ready_session')}</p>
         </div>
