@@ -125,12 +125,6 @@
     goto(base + '/');
   }
 
-  function startTimer() {
-    targetSeconds = timerInput * 60;
-    timerElapsed = 0;
-    showTimerSetup = false;
-    showCongrats = false;
-  }
 
   onDestroy(() => {
     clearInterval(timerInterval);
@@ -231,7 +225,7 @@
       <Card level={2} padding="lg" class="!rounded-[2.5rem] glass-shadow border border-white/5 space-y-6">
         {#if !isTypePreselected}
           <div class="space-y-4">
-            <label class="text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('session.current_focus')}</label>
+            <span class="block text-xs font-bold text-on-surface-variant uppercase tracking-widest ml-1">{i18n.t('session.current_focus')}</span>
             <div class="grid grid-cols-2 gap-3">
               {#each ['warmup', 'technique', 'repertoire', 'ensemble'] as type}
                 <button 
