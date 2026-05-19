@@ -265,7 +265,7 @@
   {#if showAvatarModal}
     <div class="fixed inset-0 z-[100] flex items-center justify-center p-6" transition:fade>
       <div class="absolute inset-0 bg-surface/80 backdrop-blur-sm" onclick={() => showAvatarModal = false}></div>
-      <Card level={3} class="w-full max-w-sm !rounded-[2.5rem] glass-shadow border border-white/10 z-10 relative overflow-hidden">
+      <Card level={2} class="w-full max-w-sm !rounded-[2.5rem] glass-shadow border border-white/10 z-10 relative overflow-hidden">
         <div class="p-6 space-y-6">
           <div class="flex justify-between items-center">
             <h3 class="text-xl font-display font-bold">{i18n.t('profile.choose_avatar')}</h3>
