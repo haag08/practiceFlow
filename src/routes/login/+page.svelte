@@ -5,6 +5,16 @@
   import { goto } from '$app/navigation';
   import { base } from '$app/paths';
   import { i18n } from '$lib/i18n.svelte';
+  import { settingsStore } from '$lib/stores/settings.svelte';
+
+  // Initialize default language from settingsStore or browser if needed
+  let selectedLanguage = $state(settingsStore.settings.language || 'en');
+
+  function handleLanguageChange(e: Event) {
+    const lang = (e.target as HTMLSelectElement).value;
+    selectedLanguage = lang;
+    settingsStore.settings.language = lang;
+  }
 
   let mode = $state<'login' | 'signup'>('login');
   let email = $state('');
@@ -21,7 +31,7 @@
     try {
       if (mode === 'signup') {
         const redirectTo = window.location.origin + base;
-        const { error: signUpError } = await authService.signUp(email, password, username, fullName, redirectTo);
+        const { error: signUpError } = await authService.signUp(email, password, username, fullName, selectedLanguage, redirectTo);
         if (signUpError) throw signUpError;
         alert(i18n.t('auth.confirm_email'));
         mode = 'login';
@@ -42,6 +52,18 @@
   <!-- Background Decorative Elements -->
   <div class="absolute top-[-10%] right-[-10%] w-96 h-96 bg-primary/10 blur-[120px] rounded-full"></div>
   <div class="absolute bottom-[-10%] left-[-10%] w-96 h-96 bg-tertiary/5 blur-[120px] rounded-full"></div>
+
+  <!-- Language Selector -->
+  <div class="absolute top-6 right-6 z-20">
+    <select 
+      value={selectedLanguage} 
+      onchange={handleLanguageChange}
+      class="bg-surface-container-lowest border border-white/5 rounded-xl py-2 px-3 text-sm font-display text-on-surface-variant focus:outline-none focus:border-primary/50 cursor-pointer hover:bg-surface-container-highest transition-colors shadow-lg"
+    >
+      <option value="en">English</option>
+      <option value="de">Deutsch</option>
+    </select>
+  </div>
 
   <div class="w-full max-w-md z-10 animate-fade-in">
     <div class="text-center mb-10">
