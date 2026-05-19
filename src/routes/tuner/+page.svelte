@@ -32,7 +32,8 @@
     { label: i18n.t('tuner.instruments.clarinet'), transpose: 2 },
     { label: i18n.t('tuner.instruments.piano'), transpose: 0 }
   ]);
-  let selectedInstrument = $state(instruments[0]);
+  let selectedInstrumentIndex = $state(0);
+  let selectedInstrument = $derived(instruments[selectedInstrumentIndex]);
 
   const noteStrings = ["C", "C#", "D", "Eb", "E", "F", "F#", "G", "Ab", "A", "Bb", "B"];
 
@@ -151,9 +152,9 @@
   <!-- Top Bar: Instrument & Reference -->
   <div class="flex gap-4 z-10">
     <div class="relative flex-1 group">
-      <select bind:value={selectedInstrument} class="w-full appearance-none bg-surface-container text-on-surface text-sm py-4 pl-4 pr-10 rounded-2xl outline-none border border-white/5 cursor-pointer font-body shadow-sm">
-        {#each instruments as inst}
-          <option value={inst}>{inst.label}</option>
+      <select bind:value={selectedInstrumentIndex} class="w-full appearance-none bg-surface-container text-on-surface text-sm py-4 pl-4 pr-10 rounded-2xl outline-none border border-white/5 cursor-pointer font-body shadow-sm">
+        {#each instruments as inst, i}
+          <option value={i}>{inst.label}</option>
         {/each}
       </select>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 text-on-surface-variant absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
