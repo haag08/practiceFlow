@@ -1,7 +1,7 @@
 import { supabase } from '$lib/supabaseClient';
 
 export const authService = {
-  async signUp(email: string, password: string, username: string, fullName: string, redirectTo?: string) {
+  async signUp(email: string, password: string, username: string, fullName: string, language: string = 'en', redirectTo?: string) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -9,7 +9,8 @@ export const authService = {
         emailRedirectTo: redirectTo,
         data: {
           username,
-          full_name: fullName
+          full_name: fullName,
+          language
         }
       }
     });
