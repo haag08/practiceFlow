@@ -163,7 +163,7 @@ export class TunerEngine {
   detectPitch = () => {
     if (!this.isListening || !this.analyser) return;
 
-    this.analyser.getFloatTimeDomainData(this.buffer);
+    this.analyser.getFloatTimeDomainData(this.buffer as any);
     const pitch = this.autoCorrelate(this.buffer, this.audioContext!.sampleRate);
 
     // Calculate RMS for noise threshold feedback
