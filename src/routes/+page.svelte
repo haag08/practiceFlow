@@ -147,8 +147,7 @@
 
       <div class="relative">
         <ProgressRing 
-          progress={todayStats.total_minutes} 
-          target={Math.round(profile?.weekly_goal_hours * 60 / 7 || 60)} 
+          progress={(todayStats.total_minutes / (profile?.weekly_goal_hours * 60 / 7 || 60)) * 100} 
           size={100} 
           strokeWidth={8}
         />
