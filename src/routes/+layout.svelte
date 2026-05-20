@@ -41,7 +41,7 @@
 		<div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
 	</div>
 {:else}
-	<div class="min-h-screen {isLoginPage ? '' : 'pb-28'}">
+	<div class="min-h-screen {isLoginPage ? '' : 'pb-28 lg:pb-0 lg:pl-64'}">
 		{@render children()}
 	</div>
 
