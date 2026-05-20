@@ -12,7 +12,15 @@
   ]);
 </script>
 
-<div class="fixed bottom-0 left-0 right-0 h-24 bg-surface-container-highest/90 backdrop-blur-xl border-t border-white/5 flex items-center justify-around px-2 pb-safe z-50 rounded-t-[2rem]">
+<div class="fixed bottom-0 left-0 right-0 h-24 lg:top-0 lg:bottom-0 lg:left-0 lg:w-64 lg:h-screen bg-surface-container-highest/90 backdrop-blur-xl border-t lg:border-t-0 lg:border-r border-white/5 flex lg:flex-col items-center lg:items-start justify-around lg:justify-start px-2 lg:px-6 pb-safe lg:pb-0 lg:pt-12 z-50 rounded-t-[2rem] lg:rounded-none">
+  
+  <!-- Desktop Logo -->
+  <div class="hidden lg:block w-full mb-12 px-4">
+    <h1 class="text-2xl font-display font-bold text-on-surface tracking-tighter">
+      Practice<span class="gradient-text">Flow</span>
+    </h1>
+  </div>
+
   {#each tabs as tab}
     {@const fullPath = base + (tab.path === '/' ? '' : tab.path)}
     {@const normalizedPath = fullPath.replace(/\/$/, '') || '/'}
@@ -20,7 +28,7 @@
     {@const isActive = normalizedCurrent === normalizedPath}
     <a 
       href={fullPath || '/'} 
-      class="flex flex-col items-center justify-center w-16 h-full gap-1 group transition-all duration-300"
+      class="flex flex-col lg:flex-row items-center justify-center lg:justify-start w-16 lg:w-full h-full lg:h-14 gap-1 lg:gap-4 lg:px-4 lg:mb-2 lg:rounded-2xl lg:hover:bg-surface-container group transition-all duration-300 {isActive ? 'lg:bg-primary/10' : ''}"
     >
       <div class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors {isActive ? 'bg-primary/10 text-primary' : 'text-on-surface-variant group-hover:text-primary/70'}">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={isActive ? "2" : "1.5"} stroke="currentColor" class="w-6 h-6 transition-transform duration-300 {isActive ? 'scale-110' : 'scale-100'}">
@@ -30,7 +38,7 @@
           <div class="absolute inset-0 rounded-full glass-shadow opacity-50"></div>
         {/if}
       </div>
-      <span class="text-[10px] font-body transition-colors {isActive ? 'text-primary font-medium' : 'text-on-surface-variant'}">
+      <span class="text-[10px] lg:text-sm font-body lg:font-display lg:font-bold transition-colors {isActive ? 'text-primary font-medium' : 'text-on-surface-variant group-hover:text-primary'}">
         {tab.name}
       </span>
     </a>
