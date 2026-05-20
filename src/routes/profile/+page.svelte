@@ -81,7 +81,7 @@
   }
 </script>
 
-<div class="p-4 pt-12 space-y-8 animate-fade-in pb-28 min-h-screen">
+<div class="p-4 pt-12 space-y-8 animate-fade-in pb-28 min-h-screen lg:max-w-3xl lg:mx-auto lg:pb-12">
   
   <SectionHeader title={i18n.t('profile.title')} subtitle={i18n.t('profile.subtitle')} />
 
