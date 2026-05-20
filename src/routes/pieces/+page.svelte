@@ -95,7 +95,7 @@
   }
 </script>
 
-<div class="p-4 pt-12 space-y-8 animate-fade-in pb-24 min-h-screen">
+<div class="p-4 pt-12 space-y-8 animate-fade-in pb-24 min-h-screen lg:max-w-4xl lg:mx-auto lg:pb-12">
   <!-- Header & Breadcrumbs -->
   <div class="px-2">
     <SectionHeader 
