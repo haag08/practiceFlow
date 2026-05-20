@@ -133,7 +133,7 @@
 </script>
 
 <div class="p-6 pt-16 flex flex-col items-center justify-center min-h-screen bg-surface text-on-surface">
-  <div class="w-full max-w-md space-y-8 animate-fade-in">
+  <div class="w-full max-w-md lg:max-w-xl space-y-8 animate-fade-in">
     {#if sessionState === 'mode_selection'}
       <div class="text-center space-y-6">
         <h1 class="text-3xl font-display font-bold text-on-surface">{i18n.t('session.choose_mode')}</h1>
