@@ -146,7 +146,7 @@
   );
 </script>
 
-<div class="p-4 pt-12 space-y-6 animate-fade-in pb-28 flex flex-col h-full min-h-screen">
+<div class="p-4 pt-12 space-y-6 animate-fade-in pb-28 flex flex-col h-full min-h-screen lg:max-w-2xl lg:mx-auto lg:pb-12">
   <SectionHeader title={i18n.t('tuner.title')} subtitle={i18n.t('tuner.subtitle')} />
   
   <!-- Top Bar: Instrument & Reference -->
