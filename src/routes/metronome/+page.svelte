@@ -128,7 +128,7 @@
   });
 </script>
 
-<div class="p-4 pt-12 space-y-8 animate-fade-in pb-28 flex flex-col h-full min-h-screen">
+<div class="p-4 pt-12 space-y-8 animate-fade-in pb-28 flex flex-col h-full min-h-screen lg:max-w-2xl lg:mx-auto lg:pb-12">
   <SectionHeader title={i18n.t('metronome.title')} subtitle={i18n.t('metronome.subtitle')} />
   
   <!-- 1. Grosser BPM Kreis -->
