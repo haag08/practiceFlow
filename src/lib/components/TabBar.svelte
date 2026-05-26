@@ -26,14 +26,10 @@
   </button>
 
   <!-- Desktop Logo -->
-  <div class="hidden lg:flex w-full mb-12 {uiState.sidebarCollapsed ? 'px-0 justify-center' : 'px-4'} transition-all duration-300">
-    {#if uiState.sidebarCollapsed}
-      <div class="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-display font-bold text-xl">P</div>
-    {:else}
-      <h1 class="text-2xl font-display font-bold text-on-surface tracking-tighter whitespace-nowrap">
-        Practice<span class="gradient-text">Flow</span>
-      </h1>
-    {/if}
+  <div class="hidden lg:flex w-full mb-12 {uiState.sidebarCollapsed ? 'px-0 justify-center' : 'px-4'} transition-all duration-300 overflow-hidden">
+    <h1 class="font-display font-bold text-on-surface tracking-tighter whitespace-nowrap transition-all duration-300 {uiState.sidebarCollapsed ? 'text-[11px]' : 'text-2xl'}">
+      Practice<span class="gradient-text">Flow</span>
+    </h1>
   </div>
 
   {#each tabs as tab}
