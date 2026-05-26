@@ -2,6 +2,7 @@
   import { page } from '$app/state';
   import { base } from '$app/paths';
   import { i18n } from '$lib/i18n.svelte';
+  import { uiState } from '$lib/stores/ui.svelte';
   
   const tabs = $derived([
     { name: i18n.t('nav.home'), path: '/', icon: `<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />` },
@@ -12,13 +13,27 @@
   ]);
 </script>
 
-<div class="fixed bottom-0 left-0 right-0 h-24 lg:top-0 lg:bottom-0 lg:left-0 lg:w-64 lg:h-screen bg-surface-container-highest/90 backdrop-blur-xl border-t lg:border-t-0 lg:border-r border-white/5 flex lg:flex-col items-center lg:items-start justify-around lg:justify-start px-2 lg:px-6 pb-safe lg:pb-0 lg:pt-12 z-50 rounded-t-[2rem] lg:rounded-none">
+<div class="fixed bottom-0 left-0 right-0 h-24 lg:top-0 lg:bottom-0 lg:left-0 {uiState.sidebarCollapsed ? 'lg:w-24 lg:px-2' : 'lg:w-64 lg:px-6'} lg:h-screen bg-surface-container-highest/90 backdrop-blur-xl border-t lg:border-t-0 lg:border-r border-white/5 flex lg:flex-col items-center lg:items-start justify-around lg:justify-start px-2 pb-safe lg:pb-0 lg:pt-8 z-50 rounded-t-[2rem] lg:rounded-none transition-all duration-300">
   
+  <!-- Toggle Button (Desktop only) -->
+  <button 
+    onclick={() => uiState.sidebarCollapsed = !uiState.sidebarCollapsed}
+    class="hidden lg:flex absolute top-10 -right-4 w-8 h-8 bg-surface-container-highest border border-white/10 rounded-full items-center justify-center text-on-surface hover:text-primary z-50 shadow-md transition-transform hover:scale-110"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 transition-transform duration-300 {uiState.sidebarCollapsed ? 'rotate-180' : ''}">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+    </svg>
+  </button>
+
   <!-- Desktop Logo -->
-  <div class="hidden lg:block w-full mb-12 px-4">
-    <h1 class="text-2xl font-display font-bold text-on-surface tracking-tighter">
-      Practice<span class="gradient-text">Flow</span>
-    </h1>
+  <div class="hidden lg:flex w-full mb-12 {uiState.sidebarCollapsed ? 'px-0 justify-center' : 'px-4'} transition-all duration-300">
+    {#if uiState.sidebarCollapsed}
+      <div class="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center font-display font-bold text-xl">P</div>
+    {:else}
+      <h1 class="text-2xl font-display font-bold text-on-surface tracking-tighter whitespace-nowrap">
+        Practice<span class="gradient-text">Flow</span>
+      </h1>
+    {/if}
   </div>
 
   {#each tabs as tab}
@@ -28,7 +43,8 @@
     {@const isActive = normalizedCurrent === normalizedPath}
     <a 
       href={fullPath || '/'} 
-      class="flex flex-col lg:flex-row items-center justify-center lg:justify-start w-16 lg:w-full h-full lg:h-14 gap-1 lg:gap-4 lg:px-4 lg:mb-2 lg:rounded-2xl lg:hover:bg-surface-container group transition-all duration-300 {isActive ? 'lg:bg-primary/10' : ''}"
+      class="flex flex-col lg:flex-row items-center justify-center lg:justify-start w-16 h-full lg:h-14 gap-1 lg:gap-4 {uiState.sidebarCollapsed ? 'lg:w-14 lg:px-0 lg:justify-center' : 'lg:w-full lg:px-4'} lg:mb-2 lg:rounded-2xl lg:hover:bg-surface-container group transition-all duration-300 {isActive ? 'lg:bg-primary/10' : ''}"
+      title={uiState.sidebarCollapsed ? tab.name : undefined}
     >
       <div class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors {isActive ? 'bg-primary/10 text-primary' : 'text-on-surface-variant group-hover:text-primary/70'}">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width={isActive ? "2" : "1.5"} stroke="currentColor" class="w-6 h-6 transition-transform duration-300 {isActive ? 'scale-110' : 'scale-100'}">
@@ -38,7 +54,7 @@
           <div class="absolute inset-0 rounded-full glass-shadow opacity-50"></div>
         {/if}
       </div>
-      <span class="text-[10px] lg:text-sm font-body lg:font-display lg:font-bold transition-colors {isActive ? 'text-primary font-medium' : 'text-on-surface-variant group-hover:text-primary'}">
+      <span class="text-[10px] lg:text-sm font-body lg:font-display lg:font-bold transition-colors whitespace-nowrap {isActive ? 'text-primary font-medium' : 'text-on-surface-variant group-hover:text-primary'} {uiState.sidebarCollapsed ? 'lg:hidden' : 'lg:inline'}">
         {tab.name}
       </span>
     </a>
