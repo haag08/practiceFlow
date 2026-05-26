@@ -27,6 +27,18 @@ class SettingsStore {
     const { data } = await dbService.getSettings(authStore.user.id);
     if (data) {
       this.settings = data;
+      
+      // Check if user selected a language on login page before authenticating
+      if (typeof window !== 'undefined') {
+        const pendingLang = localStorage.getItem('pending_lang');
+        if (pendingLang && pendingLang !== data.language) {
+          this.settings.language = pendingLang;
+          await this.updateSetting('language', pendingLang);
+        }
+        if (pendingLang) {
+          localStorage.removeItem('pending_lang');
+        }
+      }
     }
     this.loading = false;
   }
