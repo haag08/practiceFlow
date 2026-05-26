@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { base } from '$app/paths';
 	import { settingsStore } from '$lib/stores/settings.svelte';
+	import { uiState } from '$lib/stores/ui.svelte';
 
 	let { children } = $props();
 
@@ -41,7 +42,7 @@
 		<div class="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
 	</div>
 {:else}
-	<div class="min-h-screen {isLoginPage ? '' : 'pb-28 lg:pb-0 lg:pl-64'}">
+	<div class="min-h-screen transition-all duration-300 {isLoginPage ? '' : (uiState.sidebarCollapsed ? 'pb-28 lg:pb-0 lg:pl-24' : 'pb-28 lg:pb-0 lg:pl-64')}">
 		{@render children()}
 	</div>
 
