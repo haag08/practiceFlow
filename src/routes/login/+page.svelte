@@ -14,6 +14,9 @@
     const lang = (e.target as HTMLSelectElement).value;
     selectedLanguage = lang;
     settingsStore.settings.language = lang;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pending_lang', lang);
+    }
   }
 
   let mode = $state<'login' | 'signup'>('login');
