@@ -17,6 +17,7 @@ const translations: any = {
       done: 'Done',
       live: 'Live',
       min_today: 'minutes today',
+      min: 'min',
       h: 'h'
     },
     home: {
@@ -174,6 +175,7 @@ const translations: any = {
       done: 'Fertig',
       live: 'Live',
       min_today: 'Minuten heute',
+      min: 'min',
       h: 'Std.'
     },
     home: {
