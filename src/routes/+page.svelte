@@ -208,7 +208,7 @@
         <div class="flex flex-col gap-1 lg:items-center lg:mb-8 lg:z-10">
           <span class="text-on-surface-variant font-body text-xs lg:text-sm font-bold uppercase tracking-widest">{i18n.t('home.todays_progress')}</span>
           <h2 class="text-2xl lg:text-4xl font-display font-bold text-on-surface">
-            {todayStats.total_minutes || 0} <span class="text-sm lg:text-lg font-normal text-on-surface-variant">/ {Math.round(profile?.weekly_goal_hours * 60 / 7 || 60)} {i18n.t('common.min')}</span>
+            {todayStats.total_minutes || 0} <span class="text-sm lg:text-lg font-normal text-on-surface-variant">/ {Math.round(profile?.weekly_goal_hours * 60 / 7 || 60)}</span>
           </h2>
           <p class="text-[10px] lg:text-xs text-tertiary font-medium uppercase tracking-wider mt-1">
             {todayStats.sessions_count || 0} {i18n.t('progress.sessions')} {i18n.t('common.done').toLowerCase()}
